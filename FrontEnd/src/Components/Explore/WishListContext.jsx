@@ -21,7 +21,7 @@ export const WishlistProvider = ({ children }) => {
       }
 
       try {
-        const res = await axios.get("http://localhost:5000/api/wishlist", {
+        const res = await axios.get("https://footyhub-backend.onrender.com/api/wishlist", {
           withCredentials: true,
         });
         setWishlist(res.data || []);
