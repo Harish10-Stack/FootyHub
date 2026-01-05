@@ -13,7 +13,7 @@ export const NotificationProvider = ({ children }) => {
     if (user) {
       socket.emit("register-user", user._id);
 
-      fetch(`http://localhost:5000/api/notifications/${user._id}`)
+      fetch(`https://footyhub-backend.onrender.com/api/notifications/${user._id}`)
         .then(res => res.json())
         .then(data => setNotifications(data));
 
