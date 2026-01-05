@@ -135,7 +135,7 @@ const CheckoutPage = () => {
 
       // Send POST request to backend
       const res = await axios.post(
-        "http://localhost:5000/api/orders",
+        "https://footyhub-backend.onrender.com/api/orders",
         orderData,
         {
           withCredentials: true,
