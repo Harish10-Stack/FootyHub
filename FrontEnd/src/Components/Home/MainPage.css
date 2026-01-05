@@ -1,0 +1,38 @@
+/* Section wrapper for full width */
+.main-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Overflow for tables */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 1rem;
+  width: 100%;
+}
+
+/* Fan poll image hover */
+.fan-poll img {
+  border-radius: 1rem;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.fan-poll img:hover {
+  transform: scale(1.05);
+}
+
+/* Fade-in animation */
+.animate-fadeIn {
+  animation: fadeIn 1.2s ease forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

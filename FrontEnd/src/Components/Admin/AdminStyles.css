@@ -1,0 +1,6 @@
+/* small helpers */
+html, body, #root { height: 100%; }
+
+/* make tables slightly nicer in dark theme */
+table { border-collapse: collapse; width: 100%; }
+th, td { vertical-align: middle; }

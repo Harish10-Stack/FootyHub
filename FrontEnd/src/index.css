@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global cursor pointer for interactive elements */
+button,
+a,
+input,
+select,
+textarea,
+img:hover {
+  cursor: pointer;
+}
+
+.admin-btn {
+  background: #152238;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: left;
+  font-weight: 600;
+  transition: 0.2s ease;
+  color: #D4D7DD;
+}
+
+.admin-btn:hover {
+  background: #1E2B45;
+  color: #FFD369;
+}
+
+.admin-theme {
+  background-color: #0f1629 !important;
+}
+
+.admin-theme .admin-bg {
+  background-color: #0f1629 !important;
+}
+
+/* Heart pop animation */
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+.animate-pop {
+  animation: pop 0.3s ease-out;
+}
+
+/* Dropdown fade/scale */
+.fade-scale {
+  animation: fadeScale 0.25s ease;
+}
+@keyframes fadeScale {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Slide-down mobile menu */
+.slide-down {
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
