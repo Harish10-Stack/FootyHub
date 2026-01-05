@@ -41,7 +41,7 @@ const ReviewPopup = ({ onClose, user, refreshReviews }) => {
       const token = localStorage.getItem("footyhubToken");
 
       await axios.post(
-        "http://localhost:5000/api/reviews",
+        "https://footyhub-backend.onrender.com/api/reviews",
         {
           rating,
           comment: trimmedComment,
