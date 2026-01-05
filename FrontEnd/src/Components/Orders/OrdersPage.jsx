@@ -53,7 +53,7 @@ const OrdersPage = () => {
       if (!user) return;
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/orders/my-orders",
+          "https://footyhub-backend.onrender.com/api/orders/my-orders",
           { withCredentials: true }
         );
         setOrders(res.data);
