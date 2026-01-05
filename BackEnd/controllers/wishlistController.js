@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Wishlist from "../models/wishlist.js";
-import Product from "../models/product.js";
+import Product from "../models/Product.js";
 
 // @desc    Get user's wishlist
 // @route   GET /api/wishlist
