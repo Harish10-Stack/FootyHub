@@ -32,13 +32,13 @@ const ProductDetails = () => {
   const fetchProductAndPurchase = async () => {
     try {
       const resProduct = await axios.get(
-        `http://localhost:5000/api/products/${id}`
+        `https://footyhub-backend.onrender.com/api/products/${id}`
       );
       setProduct(resProduct.data);
 
       if (user) {
         const resPurchase = await axios.get(
-          `http://localhost:5000/api/orders/check/${id}`,
+          `https://footyhub-backend.onrender.com/api/orders/check/${id}`,
           { withCredentials: true }
         );
         setHasPurchased(resPurchase.data.purchased || false);
@@ -46,7 +46,7 @@ const ProductDetails = () => {
       }
 
       const resReviews = await axios.get(
-        `http://localhost:5000/api/product-reviews/product/${id}`,
+        `https://footyhub-backend.onrender.com/api/product-reviews/product/${id}`,
         { withCredentials: true }
       );
       setProductReviews(Array.isArray(resReviews.data) ? resReviews.data : []);
