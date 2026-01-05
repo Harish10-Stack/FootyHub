@@ -16,7 +16,7 @@ export const CartProvider = ({ children }) => {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/cart", {
+        const res = await fetch("https://footyhub-backend.onrender.com/api/cart", {
           method: "GET",
           credentials: "include", // send cookies
           headers: {
