@@ -11,10 +11,10 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const statsRes = await axios.get("http://localhost:5000/api/admin/stats", { withCredentials: true });
+        const statsRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/admin/stats", { withCredentials: true });
         setStats(statsRes.data);
 
-        const ordersRes = await axios.get("http://localhost:5000/api/orders/all", { withCredentials: true });
+        const ordersRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/orders/all", { withCredentials: true });
         setRecentOrders(ordersRes.data.slice(0, 6));
       } catch (err) {
         console.error(err);
