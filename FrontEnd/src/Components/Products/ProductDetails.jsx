@@ -32,13 +32,13 @@ const ProductDetails = () => {
   const fetchProductAndPurchase = async () => {
     try {
       const resProduct = await axios.get(
-        `https://footyhub-backend.onrender.com/api/products/${id}`
+        `https://footyhub-backend-cqir.onrender.com/api/products/${id}`
       );
       setProduct(resProduct.data);
 
       if (user) {
         const resPurchase = await axios.get(
-          `https://footyhub-backend.onrender.com/api/orders/check/${id}`,
+          `https://footyhub-backend-cqir.onrender.com/api/orders/check/${id}`,
           { withCredentials: true }
         );
         setHasPurchased(resPurchase.data.purchased || false);
@@ -46,7 +46,7 @@ const ProductDetails = () => {
       }
 
       const resReviews = await axios.get(
-        `https://footyhub-backend.onrender.com/api/product-reviews/product/${id}`,
+        `https://footyhub-backend-cqir.onrender.com/api/product-reviews/product/${id}`,
         { withCredentials: true }
       );
       setProductReviews(Array.isArray(resReviews.data) ? resReviews.data : []);
@@ -107,7 +107,7 @@ const ProductDetails = () => {
   const handlePurchaseYes = async () => {
     try {
       const resPurchase = await axios.get(
-        `http://localhost:5000/api/orders/check/${id}`,
+        `https://footyhub-backend-cqir.onrender.com/api/orders/check/${id}`,
         { withCredentials: true }
       );
       setHasPurchased(resPurchase.data.purchased || false);
@@ -171,7 +171,7 @@ const ProductDetails = () => {
     setSubmitting(true);
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/product-reviews/product/${id}`,
+        `https://footyhub-backend-cqir.onrender.com/api/product-reviews/product/${id}`,
         { productId: id, rating: newRating, comment: newComment },
         { withCredentials: true }
       );
@@ -217,7 +217,7 @@ const ProductDetails = () => {
     if (result.isConfirmed) {
       try {
         await axios.delete(
-          `http://localhost:5000/api/product-reviews/${reviewId}`,
+          `https://footyhub-backend-cqir.onrender.com/api/product-reviews/${reviewId}`,
           { withCredentials: true }
         );
 
