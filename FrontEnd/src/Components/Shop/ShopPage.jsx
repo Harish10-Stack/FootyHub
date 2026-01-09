@@ -25,7 +25,7 @@ const ShopPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("https://footyhub-backend.onrender.com/api/products");
+        const res = await fetch("https://footyhub-backend-cqir.onrender.com/api/products");
         const data = await res.json();
         setProducts(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -250,7 +250,7 @@ const ShopPage = () => {
                       {/* Product Image */}
                       <div className="relative overflow-hidden rounded-t-3xl">
                     <img
-                          src={`http://localhost:5000${product.img}`}
+                          src={`https://footyhub-backend-cqir.onrender.com${product.img}`}
                           alt={product.name}
                           className="w-full h-56 sm:h-64 md:h-80 object-cover group-hover:scale-110 transition-all duration-700 rounded-t-3xl"
                         />
