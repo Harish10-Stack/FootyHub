@@ -297,7 +297,7 @@ const ProductDetails = () => {
             <div className="flex justify-center items-center">
               <div className="relative bg-gradient-to-br from-gray-50 to-slate-50 rounded-3xl p-8 shadow-xl transition-all duration-500 hover:shadow-2xl hover:scale-105 border border-gray-200">
                 <img
-                  src={`http://localhost:5000${product.img}`}
+                  src={`https://footyhub-backend-cqir.onrender.com${product.img}`}
                   alt={product.name}
                   className="w-full max-w-md h-auto object-contain rounded-2xl"
                 />
