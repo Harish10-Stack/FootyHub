@@ -135,7 +135,7 @@ const CheckoutPage = () => {
 
       // Send POST request to backend
       const res = await axios.post(
-        "https://footyhub-backend.onrender.com/api/orders",
+        "https://footyhub-backend-cqir.onrender.com/api/orders",
         orderData,
         {
           withCredentials: true,
@@ -198,7 +198,7 @@ const CheckoutPage = () => {
                     onClick={() => navigate(`/product/${item.product._id}`)}
                   >
                     <img
-                      src={`http://localhost:5000${item.product?.img}`}
+                      src={`https://footyhub-backend-cqir.onrender.com${item.product?.img}`}
                       alt={item.product?.name}
                       className="w-full max-w-36 h-auto object-cover rounded-2xl mb-6 md:mb-0 shadow-xl border border-slate-600"
                     />
