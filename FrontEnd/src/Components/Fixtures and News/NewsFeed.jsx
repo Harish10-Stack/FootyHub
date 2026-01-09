@@ -31,7 +31,7 @@ const NewsFeed = () => {
 
   const fetchNews = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/news");
+      const { data } = await axios.get("https://footyhub-backend-cqir.onrender.com/api/news");
       setNewsData(data);
 
       // Fetch comments and reactions for each news item
@@ -40,8 +40,8 @@ const NewsFeed = () => {
       await Promise.all(
         data.map(async (n) => {
           const [commentsRes, reactionsRes] = await Promise.all([
-            axios.get(`http://localhost:5000/api/news/${n._id}/comments`),
-            axios.get(`http://localhost:5000/api/news/${n._id}/reactions`)
+            axios.get(`https://footyhub-backend-cqir.onrender.com/api/news/${n._id}/comments`),
+            axios.get(`https://footyhub-backend-cqir.onrender.com/api/news/${n._id}/reactions`)
           ]);
           commentsData[n._id] = commentsRes.data;
           reactionsData[n._id] = reactionsRes.data;
@@ -59,7 +59,7 @@ const NewsFeed = () => {
     if (!user) return alert("Login to react!");
     try {
       await axios.post(
-        `http://localhost:5000/api/news/${newsId}/react`,
+        `https://footyhub-backend-cqir.onrender.com/api/news/${newsId}/react`,
         { emoji },
         { withCredentials: true }
       );
@@ -76,7 +76,7 @@ const NewsFeed = () => {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/news/${newsId}/comment`,
+        `https://footyhub-backend-cqir.onrender.com/api/news/${newsId}/comment`,
         { text },
         { withCredentials: true }
       );
@@ -103,7 +103,7 @@ const NewsFeed = () => {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem("footyhubToken");
-        await axios.delete(`http://localhost:5000/api/news/${newsId}/comment/${commentId}`, {
+        await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/news/${newsId}/comment/${commentId}`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
