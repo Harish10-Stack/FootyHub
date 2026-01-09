@@ -59,7 +59,7 @@ const MainPage = () => {
   useEffect(() => {
     const fetchPollData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/poll");
+        const response = await axios.get("https://footyhub-backend-cqir.onrender.com/api/poll");
         setVotes({
           messi: response.data.totalMessi,
           ronaldo: response.data.totalRonaldo,
@@ -89,7 +89,7 @@ const MainPage = () => {
   // 🔹 Fetch all reviews
   const fetchReviews = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/reviews");
+      const response = await axios.get("https://footyhub-backend-cqir.onrender.com/api/reviews");
       const sorted = response.data.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
@@ -123,7 +123,7 @@ const MainPage = () => {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem("footyhubToken");
-        await axios.delete(`http://localhost:5000/api/reviews/${reviewId}`, {
+        await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/reviews/${reviewId}`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
@@ -162,7 +162,7 @@ const MainPage = () => {
     try {
       const token = localStorage.getItem("footyhubToken");
       const response = await axios.post(
-        "http://localhost:5000/api/poll/vote",
+        "https://footyhub-backend-cqir.onrender.com/api/poll/vote",
         { player },
         {
           headers: { Authorization: `Bearer ${token}` },
