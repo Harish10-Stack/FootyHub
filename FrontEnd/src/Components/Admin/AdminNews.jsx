@@ -14,7 +14,7 @@ export default function AdminNews() {
 
   const fetchNews = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/news");
+      const { data } = await axios.get("https://footyhub-backend-cqir.onrender.com/api/news");
       setNews(data);
     } catch (error) {
       Swal.fire("Error", "Failed to fetch news", "error");
