@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 
-const API = "http://localhost:5000";
+const API = "https://footyhub-backend-cqir.onrender.com";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
