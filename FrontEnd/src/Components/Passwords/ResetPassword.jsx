@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { validatePassword } from "../../utils/passwordValidator.js";
 
-const API = "http://localhost:5000";
+const API = "https://footyhub-backend-cqir.onrender.com";
 
 const ResetPassword = () => {
   const { token } = useParams();
