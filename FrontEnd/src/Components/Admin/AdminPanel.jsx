@@ -48,7 +48,7 @@ export default function AdminPanel() {
 
   const fetchStats = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/admin/stats", {
+      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/admin/stats", {
         withCredentials: true,
       });
       setStats(res.data || {});
@@ -60,7 +60,7 @@ export default function AdminPanel() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/products");
+      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/products");
       setProducts(res.data || []);
     } catch (err) {
       console.error(err);
@@ -72,7 +72,7 @@ export default function AdminPanel() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/orders/all", {
+      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/orders/all", {
         withCredentials: true,
       });
       setOrders(res.data || []);
@@ -86,7 +86,7 @@ export default function AdminPanel() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/users/admin/all", {
+      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/users/admin/all", {
         withCredentials: true,
       });
       setUsers(res.data || []);
@@ -100,7 +100,7 @@ export default function AdminPanel() {
   const fetchPoll = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/poll");
+      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/poll");
       setPoll(res.data || {});
     } catch (err) {
       console.error(err);
