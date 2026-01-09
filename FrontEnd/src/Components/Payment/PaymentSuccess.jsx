@@ -9,7 +9,7 @@ export default function PaymentSuccess() {
   useEffect(() => {
     const markPaid = async () => {
       try {
-        await axios.put(`http://localhost:5000/api/orders/${id}/pay`, {}, { withCredentials: true });
+        await axios.put(`https://footyhub-backend-cqir.onrender.com/api/orders/${id}/pay`, {}, { withCredentials: true });
 
         Swal.fire({
           icon: "success",
