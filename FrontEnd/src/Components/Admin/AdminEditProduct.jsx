@@ -13,7 +13,7 @@ export default function AdminEditProduct() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/products/${id}`, { withCredentials: true });
+        const { data } = await axios.get(`https://footyhub-backend-cqir.onrender.com/api/products/${id}`, { withCredentials: true });
         setForm({ name: data.name, category: data.category, price: data.price, description: data.description });
         setCurrentImage(data.img);
       } catch (err) {
@@ -37,7 +37,7 @@ export default function AdminEditProduct() {
     if (image) formData.append('img', image);
 
     try {
-      await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
+      await axios.put(`https://footyhub-backend-cqir.onrender.com/api/products/${id}`, formData, {
         withCredentials: true,
         headers: { 'Content-Type': 'multipart/form-data' }
       });
@@ -126,7 +126,7 @@ export default function AdminEditProduct() {
             {currentImage && (
               <div className="mb-4">
                 <img
-                  src={`http://localhost:5000${currentImage}`}
+                  src={`https://footyhub-backend-cqir.onrender.com${currentImage}`}
                   alt="Current Product"
                   className="w-32 h-32 object-cover rounded-lg border border-[#23303a]"
                 />
