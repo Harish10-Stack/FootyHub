@@ -16,7 +16,7 @@ export const CartProvider = ({ children }) => {
       }
 
       try {
-        const res = await fetch("https://footyhub-backend.onrender.com/api/cart", {
+        const res = await fetch("https://footyhub-backend-cqir.onrender.com/api/cart", {
           method: "GET",
           credentials: "include", // send cookies
           headers: {
@@ -45,7 +45,7 @@ export const CartProvider = ({ children }) => {
     if (!user) throw new Error("Not authenticated");
 
     try {
-      const res = await fetch("http://localhost:5000/api/cart/add", {
+      const res = await fetch("https://footyhub-backend-cqir.onrender.com/api/cart/add", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -71,7 +71,7 @@ export const CartProvider = ({ children }) => {
     if (!user) throw new Error("Not authenticated");
 
     try {
-      const res = await fetch(`http://localhost:5000/api/cart/update/${productId}`, {
+      const res = await fetch(`https://footyhub-backend-cqir.onrender.com/api/cart/update/${productId}`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -97,7 +97,7 @@ export const CartProvider = ({ children }) => {
     if (!user) throw new Error("Not authenticated");
 
     try {
-      const res = await fetch(`http://localhost:5000/api/cart/remove/${productId}`, {
+      const res = await fetch(`https://footyhub-backend-cqir.onrender.com/api/cart/remove/${productId}`, {
         method: "DELETE",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -123,7 +123,7 @@ export const CartProvider = ({ children }) => {
     if (!user) throw new Error("Not authenticated");
 
     try {
-      const res = await fetch(`http://localhost:5000/api/cart/clear`, {
+      const res = await fetch(`https://footyhub-backend-cqir.onrender.com/api/cart/clear`, {
         method: "DELETE",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
