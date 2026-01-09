@@ -36,7 +36,7 @@ import FootyHubExplore from "./Components/Explore/FootyHubExplore.jsx";
 import AdminRoute from "./Components/Explore/AdminRoute.jsx";
 import AdminLayout from "./Components/Admin/AdminLayout.jsx";
 import AdminMainPage from "./Components/Admin/AdminMainPage.jsx";
-import AdminDashboard from "./Components/Admin/AdminDashboard.jsx";
+import AdminDashBoard from "./Components/Admin/AdminDashboard.jsx";
 import AdminProducts from "./Components/Admin/AdminProducts.jsx";
 import AdminAddProduct from "./Components/Admin/AdminAddProduct.jsx";
 import AdminEditProduct from "./Components/Admin/AdminEditProduct.jsx";
