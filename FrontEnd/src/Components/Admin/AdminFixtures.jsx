@@ -24,7 +24,7 @@ const AdminFixtures = () => {
   // Fetch fixtures from backend
   const fetchFixtures = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/fixtures");
+      const { data } = await axios.get("https://footyhub-backend-cqir.onrender.com/api/fixtures");
       setFixtures(data);
       setLoading(false);
     } catch (error) {
@@ -48,7 +48,7 @@ const AdminFixtures = () => {
     });
     if (!isConfirmed) return;
     try {
-      await axios.delete(`http://localhost:5000/api/fixtures/${id}`, {
+      await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/fixtures/${id}`, {
         withCredentials: true,
       });
       setFixtures(prevFixtures => prevFixtures.filter((f) => f._id !== id));
@@ -75,7 +75,7 @@ const AdminFixtures = () => {
   const saveFixture = async () => {
     try {
       const { data } = await axios.put(
-        `http://localhost:5000/api/fixtures/${editingFixture._id}`,
+        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${editingFixture._id}`,
         formData,
         { withCredentials: true }
       );
@@ -103,7 +103,7 @@ const AdminFixtures = () => {
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/fixtures", addFormData, { withCredentials: true });
+      await axios.post("https://footyhub-backend-cqir.onrender.com/api/fixtures", addFormData, { withCredentials: true });
       setAddFormData({ league: "", home: "", away: "", date: "", time: "" });
       fetchFixtures();
       alert("Fixture added successfully");
