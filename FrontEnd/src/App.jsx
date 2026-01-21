@@ -69,6 +69,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/footyhub/explore" element={<FootyHubExplore />} />
 
         {/* PROTECTED ROUTES */}
         <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
@@ -76,7 +77,6 @@ function App() {
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
         <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
-        <Route path="/footyhub/explore" element={<ProtectedRoute><FootyHubExplore /></ProtectedRoute>} />
 
         {/* ADMIN ROUTES */}
         <Route

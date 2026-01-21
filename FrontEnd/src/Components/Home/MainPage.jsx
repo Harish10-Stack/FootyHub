@@ -216,13 +216,7 @@ const MainPage = () => {
 
       {/* Hero Section */}
       <div className="relative h-[75vh] md:h-[90vh] w-full overflow-hidden pt-[56px] md:pt-[70px]">
-        <video
-          autoPlay
-          muted
-          loop
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 scale-105 md:scale-100"
-          src="../Public/FootyHub.mp4"
-        />
+        
         {user && !user.isAdmin && (
           <button
             onClick={() => setShowReview(true)}
