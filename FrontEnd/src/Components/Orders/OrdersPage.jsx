@@ -53,7 +53,7 @@ const OrdersPage = () => {
       if (!user) return;
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/orders/my-orders",
+          "https://footyhub-backend-cqir.onrender.com/api/orders/my-orders",
           { withCredentials: true }
         );
         setOrders(res.data);
@@ -160,7 +160,7 @@ const OrdersPage = () => {
                     onClick={() => navigate(`/product/${item.product._id}`)}
                   >
                     <img
-                      src={`http://localhost:5000/uploads/${item.product.img.replace(/^\/uploads\//, '')}`}
+                      src={`https://footyhub-backend-cqir.onrender.com/uploads/${item.product.img.replace(/^\/uploads\//, '')}`}
                       alt={item.product.name}
                       className="w-full max-w-24 h-auto object-cover rounded-xl shadow-lg"
                     />

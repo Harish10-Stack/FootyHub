@@ -21,7 +21,7 @@ export const WishlistProvider = ({ children }) => {
       }
 
       try {
-        const res = await axios.get("http://localhost:5000/api/wishlist", {
+        const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/wishlist", {
           withCredentials: true,
         });
         setWishlist(res.data || []);
@@ -42,7 +42,7 @@ export const WishlistProvider = ({ children }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/wishlist",
+        "https://footyhub-backend-cqir.onrender.com/api/wishlist",
         { productId },
         { withCredentials: true }
       );
@@ -57,7 +57,7 @@ export const WishlistProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const res = await axios.delete(`http://localhost:5000/api/wishlist/${productId}`, {
+      const res = await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/wishlist/${productId}`, {
         withCredentials: true,
       });
       setWishlist(res.data || []);

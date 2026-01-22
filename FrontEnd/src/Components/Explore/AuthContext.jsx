@@ -3,7 +3,7 @@ import socket from "../utils/socket"; // ✅ using global socket
 import axios from "axios";
 
 const AuthContext = createContext();
-const API = "http://localhost:5000";
+const API = "https://footyhub-backend-cqir.onrender.com";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

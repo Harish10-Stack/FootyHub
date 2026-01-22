@@ -6,7 +6,7 @@ export default function AdminPoll() {
 
   const fetchPoll = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/poll");
+      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/poll");
       setPoll(res.data);
     } catch (err) {
       console.error(err);

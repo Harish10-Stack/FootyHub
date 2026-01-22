@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import { validatePassword } from "../../utils/passwordValidator.js";
 
-const API = "http://localhost:5000";
+const API = "https://footyhub-backend-cqir.onrender.com";
 
 const Profile = () => {
   const { user, updateUser, logout } = useAuth();

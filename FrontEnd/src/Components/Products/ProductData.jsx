@@ -7,7 +7,7 @@ const ProductData = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/products");
+        const response = await fetch("https://footyhub-backend-cqir.onrender.com/api/products");
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -26,7 +26,7 @@ const ProductData = () => {
     <div className="grid grid-cols-3 gap-4">
       {products.map((product) => (
         <div key={product._id} className="border p-4 rounded">
-          <img src={`http://localhost:5000${product.img}`} alt={product.name} className="w-full" />
+          <img src={`https://footyhub-backend-cqir.onrender.com${product.img}`} alt={product.name} className="w-full" />
           <h2 className="text-lg font-semibold">{product.name}</h2>
           <p>₹{product.price}</p>
         </div>

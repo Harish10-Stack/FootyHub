@@ -14,8 +14,8 @@ export default function SendNotification() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const usersRes = await axios.get("http://localhost:5000/api/users/admin/all", { withCredentials: true });
-        const defaultsRes = await axios.get("http://localhost:5000/api/notifications/defaults", { withCredentials: true });
+        const usersRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/users/admin/all", { withCredentials: true });
+        const defaultsRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/notifications/defaults", { withCredentials: true });
 
         setUsers(usersRes.data);
         setDefaultNotifications(defaultsRes.data);
@@ -53,7 +53,7 @@ export default function SendNotification() {
       // If admin selected a default template instead of typing
       if (selectedDefault !== "") {
         await axios.post(
-          `http://localhost:5000/api/notifications/send/${selectedDefault}`,
+          `https://footyhub-backend-cqir.onrender.com/api/notifications/send/${selectedDefault}`,
           { userIds: selectedUser ? [selectedUser] : [] },
           { withCredentials: true }
         );
@@ -62,7 +62,7 @@ export default function SendNotification() {
       } else {
         // Send custom message
         await axios.post(
-          "http://localhost:5000/api/notifications",
+          "https://footyhub-backend-cqir.onrender.com/api/notifications",
           { title, message, userId: selectedUser || null },
           { withCredentials: true }
         );

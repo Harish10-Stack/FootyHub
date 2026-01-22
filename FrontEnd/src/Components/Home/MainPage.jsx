@@ -36,9 +36,19 @@ const upcomingFixtures = [
 ];
 
 const mainProducts = [
-  { id: 1, name: "Football", price: "₹2,969", img: "/uploads/Footballs/id1.webp" },
+  {
+    id: 1,
+    name: "Football",
+    price: "₹2,969",
+    img: "/uploads/Footballs/id1.webp",
+  },
   { id: 2, name: "Jersey", price: "₹1,299", img: "/uploads/Jerseys/id19.webp" },
-  { id: 3, name: "Football Boots", price: "₹15,999", img: "/uploads/Boots/id40.webp" },
+  {
+    id: 3,
+    name: "Football Boots",
+    price: "₹15,999",
+    img: "/uploads/Boots/id40.webp",
+  },
 ];
 
 const MainPage = () => {
@@ -59,7 +69,9 @@ const MainPage = () => {
   useEffect(() => {
     const fetchPollData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/poll");
+        const response = await axios.get(
+          "https://footyhub-backend-cqir.onrender.com/api/poll",
+        );
         setVotes({
           messi: response.data.totalMessi,
           ronaldo: response.data.totalRonaldo,
@@ -89,9 +101,11 @@ const MainPage = () => {
   // 🔹 Fetch all reviews
   const fetchReviews = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/reviews");
+      const response = await axios.get(
+        "https://footyhub-backend-cqir.onrender.com/api/reviews",
+      );
       const sorted = response.data.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
       );
       setReviews(sorted);
     } catch (error) {
@@ -123,10 +137,13 @@ const MainPage = () => {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem("footyhubToken");
-        await axios.delete(`http://localhost:5000/api/reviews/${reviewId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
+        await axios.delete(
+          `https://footyhub-backend-cqir.onrender.com/api/reviews/${reviewId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+          },
+        );
 
         Swal.fire({
           icon: "success",
@@ -162,12 +179,12 @@ const MainPage = () => {
     try {
       const token = localStorage.getItem("footyhubToken");
       const response = await axios.post(
-        "http://localhost:5000/api/poll/vote",
+        "https://footyhub-backend-cqir.onrender.com/api/poll/vote",
         { player },
         {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
-        }
+        },
       );
       setVotes({
         messi: response.data.totalMessi,
@@ -199,15 +216,7 @@ const MainPage = () => {
   };
 
   const handleLoadMoreReviews = () => {
-    setVisibleReviews(prev => prev + 5);
-  };
-
-  const renderStars = (rating) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={i < rating ? "text-yellow-400" : "text-gray-300"}>
-        ★
-      </span>
-    ));
+    setVisibleReviews((prev) => prev + 5);
   };
 
   return (
@@ -216,7 +225,6 @@ const MainPage = () => {
 
       {/* Hero Section */}
       <div className="relative h-[75vh] md:h-[90vh] w-full overflow-hidden pt-[56px] md:pt-[70px]">
-        
         {user && !user.isAdmin && (
           <button
             onClick={() => setShowReview(true)}
@@ -225,10 +233,9 @@ const MainPage = () => {
             Give Feedback
           </button>
         )}
+
         <div
-          className={`absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4 ${
-            showReview ? "" : "bg-black bg-opacity-60"
-          }`}
+          className={`absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4 ${showReview ? "" : "bg-black bg-opacity-60"}`}
         >
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-green-400 drop-shadow-lg mb-4 animate-fadeIn">
             Welcome to FootyHub ⚽
@@ -267,7 +274,6 @@ const MainPage = () => {
                 key={index}
                 className="bg-gray-100 p-4 md:p-6 rounded-lg shadow flex flex-col gap-2 md:gap-0 md:flex-row justify-between items-start md:items-center"
               >
-
                 <div className="font-semibold text-gray-800 mb-2 md:mb-0">
                   {match.homeTeam} vs {match.awayTeam}
                 </div>
@@ -333,7 +339,7 @@ const MainPage = () => {
                 className="bg-gray-100 p-6 rounded-lg shadow-md flex flex-col items-center hover:shadow-xl transition cursor-pointer"
               >
                 <img
-                  src={`http://localhost:5000${product.img}`}
+                  src={`https://footyhub-backend-cqir.onrender.com${product.img}`}
                   alt={product.name}
                   className="w-full max-w-40 sm:max-w-48 md:max-w-56 h-auto object-cover rounded-lg mb-4"
                 />

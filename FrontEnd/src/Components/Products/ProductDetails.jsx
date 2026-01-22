@@ -32,13 +32,13 @@ const ProductDetails = () => {
   const fetchProductAndPurchase = async () => {
     try {
       const resProduct = await axios.get(
-        `http://localhost:5000/api/products/${id}`
+        `https://footyhub-backend-cqir.onrender.com/api/products/${id}`
       );
       setProduct(resProduct.data);
 
       if (user) {
         const resPurchase = await axios.get(
-          `http://localhost:5000/api/orders/check/${id}`,
+          `https://footyhub-backend-cqir.onrender.com/api/orders/check/${id}`,
           { withCredentials: true }
         );
         setHasPurchased(resPurchase.data.purchased || false);
@@ -46,7 +46,7 @@ const ProductDetails = () => {
       }
 
       const resReviews = await axios.get(
-        `http://localhost:5000/api/product-reviews/product/${id}`,
+        `https://footyhub-backend-cqir.onrender.com/api/product-reviews/product/${id}`,
         { withCredentials: true }
       );
       setProductReviews(Array.isArray(resReviews.data) ? resReviews.data : []);
@@ -107,7 +107,7 @@ const ProductDetails = () => {
   const handlePurchaseYes = async () => {
     try {
       const resPurchase = await axios.get(
-        `http://localhost:5000/api/orders/check/${id}`,
+        `https://footyhub-backend-cqir.onrender.com/api/orders/check/${id}`,
         { withCredentials: true }
       );
       setHasPurchased(resPurchase.data.purchased || false);
@@ -171,7 +171,7 @@ const ProductDetails = () => {
     setSubmitting(true);
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/product-reviews/product/${id}`,
+        `https://footyhub-backend-cqir.onrender.com/api/product-reviews/product/${id}`,
         { productId: id, rating: newRating, comment: newComment },
         { withCredentials: true }
       );
@@ -217,7 +217,7 @@ const ProductDetails = () => {
     if (result.isConfirmed) {
       try {
         await axios.delete(
-          `http://localhost:5000/api/product-reviews/${reviewId}`,
+          `https://footyhub-backend-cqir.onrender.com/api/product-reviews/${reviewId}`,
           { withCredentials: true }
         );
 
@@ -297,7 +297,7 @@ const ProductDetails = () => {
             <div className="flex justify-center items-center">
               <div className="relative bg-gradient-to-br from-gray-50 to-slate-50 rounded-3xl p-8 shadow-xl transition-all duration-500 hover:shadow-2xl hover:scale-105 border border-gray-200">
                 <img
-                  src={`http://localhost:5000${product.img}`}
+                  src={`https://footyhub-backend-cqir.onrender.com${product.img}`}
                   alt={product.name}
                   className="w-full max-w-md h-auto object-contain rounded-2xl"
                 />

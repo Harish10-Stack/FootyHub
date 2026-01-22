@@ -92,7 +92,7 @@ export default function NotificationBell() {
 
   const removeNotification = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/notifications/read/${id}`, {}, { withCredentials: true });
+      await axios.put(`https://footyhub-backend-cqir.onrender.com/api/notifications/read/${id}`, {}, { withCredentials: true });
       removeFromContext(id);
     } catch (err) {
       console.error(err);
@@ -102,7 +102,7 @@ export default function NotificationBell() {
   const removeAllNotifications = async () => {
     setClearing(true);
     setTimeout(async () => {
-      await axios.delete("http://localhost:5000/api/notifications/delete-all", { withCredentials: true });
+      await axios.delete("https://footyhub-backend-cqir.onrender.com/api/notifications/delete-all", { withCredentials: true });
       clearNotifications();
       setClearing(false);
     }, 300);

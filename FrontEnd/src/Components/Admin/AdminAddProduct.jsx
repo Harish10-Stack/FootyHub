@@ -35,7 +35,7 @@ export default function AdminAddProduct() {
     if (image) formData.append('img', image);
 
     try {
-      await axios.post("http://localhost:5000/api/products", formData, {
+      await axios.post("https://footyhub-backend-cqir.onrender.com/api/products", formData, {
         withCredentials: true,
         headers: { 'Content-Type': 'multipart/form-data' }
       });

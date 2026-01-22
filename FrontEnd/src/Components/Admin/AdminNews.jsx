@@ -14,7 +14,7 @@ export default function AdminNews() {
 
   const fetchNews = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/news");
+      const { data } = await axios.get("https://footyhub-backend-cqir.onrender.com/api/news");
       setNews(data);
     } catch (error) {
       Swal.fire("Error", "Failed to fetch news", "error");
@@ -36,13 +36,13 @@ export default function AdminNews() {
     try {
       if (editingNews) {
         await axios.put(
-          `http://localhost:5000/api/news/${editingNews._id}`,
+          `https://footyhub-backend-cqir.onrender.com/api/news/${editingNews._id}`,
           formData,
           { withCredentials: true }
         );
         Swal.fire("Success", "News updated successfully", "success");
       } else {
-        await axios.post("http://localhost:5000/api/news", formData, { withCredentials: true });
+        await axios.post("https://footyhub-backend-cqir.onrender.com/api/news", formData, { withCredentials: true });
         Swal.fire("Success", "News added successfully", "success");
       }
       setFormData({ title: "", description: "", date: "" });
@@ -73,7 +73,7 @@ export default function AdminNews() {
     });
     if (!isConfirmed) return;
     try {
-      await axios.delete(`http://localhost:5000/api/news/${id}`, { withCredentials: true });
+      await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/news/${id}`, { withCredentials: true });
       setNews(prevNews => prevNews.filter((n) => n._id !== id));
       Swal.fire("Deleted", "News item removed", "success");
     } catch (error) {

@@ -19,7 +19,7 @@ export default function ReviewPopup({ orderId, notifId, onSubmit, onClose }) {
         await onSubmit({ orderId, rating, comment });
       } else {
         await axios.post(
-          "http://localhost:5000/api/reviews",
+          "https://footyhub-backend-cqir.onrender.com/api/reviews",
           { orderId, rating, comment },
           { withCredentials: true }
         );
@@ -28,7 +28,7 @@ export default function ReviewPopup({ orderId, notifId, onSubmit, onClose }) {
       // Mark the notification as read if notifId is provided
       if (notifId) {
         await axios.put(
-          `http://localhost:5000/api/notifications/read/${notifId}`,
+          `https://footyhub-backend-cqir.onrender.com/api/notifications/read/${notifId}`,
           {},
           { withCredentials: true }
         );

@@ -22,7 +22,7 @@ const ProductGrid = ({ products, showAll = false, hideButton = false }) => {
           return (
             <div key={product._id} className="border rounded-xl overflow-hidden shadow hover:shadow-2xl transition transform hover:-translate-y-1">
               <div className="h-48 w-full overflow-hidden relative">
-                <img src={`http://localhost:5000${product.img}`} alt={product.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                <img src={`https://footyhub-backend-cqir.onrender.com${product.img}`} alt={product.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
               </div>
 
               <div className="p-4 flex flex-col gap-2" onClick={() => navigate(`/product/${product._id}`)} style={{cursor:'pointer'}}>

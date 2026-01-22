@@ -25,7 +25,7 @@ const WishlistPage = () => {
     const fetchWishlist = async () => {
       if (!user) return;
       try {
-        const res = await axios.get("http://localhost:5000/api/wishlist", { withCredentials: true });
+        const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/wishlist", { withCredentials: true });
         setWishlist(res.data);
       } catch (err) {
         console.error("Failed to fetch wishlist:", err);
@@ -195,7 +195,7 @@ const WishlistPage = () => {
                   {/* Product Image */}
                   <div className="relative overflow-hidden rounded-t-3xl">
                     <img
-                      src={`http://localhost:5000${product.img}`}
+                      src={`https://footyhub-backend-cqir.onrender.com${product.img}`}
                       alt={product.name}
                       className="w-full h-80 object-cover group-hover:scale-110 transition-all duration-700 rounded-t-3xl"
                     />

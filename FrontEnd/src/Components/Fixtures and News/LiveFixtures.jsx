@@ -30,7 +30,7 @@ const FixturesPage = () => {
 
   const fetchFixtures = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/fixtures");
+      const { data } = await axios.get("https://footyhub-backend-cqir.onrender.com/api/fixtures");
       setFixtures(data);
 
       // Fetch comments and reactions for each fixture
@@ -39,8 +39,8 @@ const FixturesPage = () => {
       await Promise.all(
         data.map(async (f) => {
           const [commentsRes, reactionsRes] = await Promise.all([
-            axios.get(`http://localhost:5000/api/fixtures/${f._id}/comments`),
-            axios.get(`http://localhost:5000/api/fixtures/${f._id}/reactions`)
+            axios.get(`https://footyhub-backend-cqir.onrender.com/api/fixtures/${f._id}/comments`),
+            axios.get(`https://footyhub-backend-cqir.onrender.com/api/fixtures/${f._id}/reactions`)
           ]);
           commentsData[f._id] = commentsRes.data;
           reactionsData[f._id] = reactionsRes.data;
@@ -82,7 +82,7 @@ const FixturesPage = () => {
     if (!user) return alert("Login to react!");
     try {
       await axios.post(
-        `http://localhost:5000/api/fixtures/${fixtureId}/react`,
+        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${fixtureId}/react`,
         { emoji },
         { withCredentials: true }
       );
@@ -99,7 +99,7 @@ const FixturesPage = () => {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/fixtures/${fixtureId}/comment`,
+        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${fixtureId}/comment`,
         { text },
         { withCredentials: true }
       );
@@ -117,7 +117,7 @@ const FixturesPage = () => {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/fixtures/${fixtureId}/comment/${commentId}`,
+        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${fixtureId}/comment/${commentId}`,
         { withCredentials: true }
       );
       fetchFixtures();

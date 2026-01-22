@@ -9,7 +9,7 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users/admin/all", { withCredentials: true });
+      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/users/admin/all", { withCredentials: true });
       setUsers(res.data);
     } catch (err) {
       console.error(err);
@@ -29,7 +29,7 @@ export default function AdminUsers() {
     if (!isConfirmed) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/users/admin/delete/${id}`, { withCredentials: true });
+      await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/users/admin/delete/${id}`, { withCredentials: true });
       Swal.fire("Deleted", "User removed", "success");
       fetchUsers();
     } catch (err) {
