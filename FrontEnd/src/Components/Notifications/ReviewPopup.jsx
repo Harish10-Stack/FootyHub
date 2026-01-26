@@ -1,6 +1,4 @@
-
 import React, { useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import api from "../../utils/api";
 
@@ -15,7 +13,7 @@ export default function ReviewPopup({ orderId, notifId, onSubmit, onClose }) {
     }
 
     try {
-      // Submit the review
+      // Submit the review to backend
       if (onSubmit) {
         await onSubmit({ orderId, rating, comment });
       } else {
@@ -27,11 +25,19 @@ export default function ReviewPopup({ orderId, notifId, onSubmit, onClose }) {
         await api.put(`/notifications/read/${notifId}`);
       }
 
+      Swal.fire({
+        icon: "success",
+        title: "Thank you!",
+        text: "Your review has been submitted.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       // Close the popup
       if (onClose) onClose();
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "Could not submit review", "error");
+      Swal.fire("Error", err.response?.data?.message || "Could not submit review", "error");
     }
   };
 
@@ -43,18 +49,22 @@ export default function ReviewPopup({ orderId, notifId, onSubmit, onClose }) {
           Thank you for your purchase! Please leave a review:
         </p>
 
+        {/* Star Rating */}
         <div className="flex space-x-1 mb-4">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               onClick={() => setRating(star)}
-              className={`text-xl sm:text-2xl px-1 ${star <= rating ? "text-yellow-400" : "text-gray-500"}`}
+              className={`text-xl sm:text-2xl px-1 ${
+                star <= rating ? "text-yellow-400" : "text-gray-500"
+              }`}
             >
               ★
-            </button>   
+            </button>
           ))}
         </div>
 
+        {/* Comment */}
         <textarea
           placeholder="Write your comment..."
           value={comment}
@@ -62,7 +72,7 @@ export default function ReviewPopup({ orderId, notifId, onSubmit, onClose }) {
           className="w-full p-3 rounded bg-gray-900 text-white text-sm sm:text-base mb-4"
         />
 
-
+        {/* Actions */}
         <div className="flex flex-col sm:flex-row justify-end gap-2">
           {onClose && (
             <button
@@ -83,3 +93,4 @@ export default function ReviewPopup({ orderId, notifId, onSubmit, onClose }) {
     </div>
   );
 }
+
