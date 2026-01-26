@@ -42,7 +42,7 @@ export default function AdminAddProduct() {
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/products`,
+        `https://footyhub-backend-hrqm.onrender.com`,
         formData,
         {
           withCredentials: true,
