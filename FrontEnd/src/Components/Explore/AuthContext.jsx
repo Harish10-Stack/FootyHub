@@ -13,26 +13,32 @@ export const AuthProvider = ({ children }) => {
   // Load user from backend
   // -----------------------------------------
   const loadUser = async () => {
-    const token = localStorage.getItem("footyhubToken"); // ✅ declare token
+    const token = localStorage.getItem("footyhubToken");
 
     if (!token) {
       setUser(null);
+      setNotifications([]);
       return;
     }
 
     try {
       const { data } = await api.get("/users/profile");
       setUser(data);
+      setNotifications([]);
     } catch (err) {
       localStorage.removeItem("footyhubToken");
       setUser(null);
+      setNotifications([]);
     }
   };
 
   useEffect(() => {
     const init = async () => {
-      await loadUser();
-      setLoading(false);
+      try {
+        await loadUser();
+      } finally {
+        setLoading(false);
+      }
     };
     init();
   }, []);
@@ -42,11 +48,13 @@ export const AuthProvider = ({ children }) => {
   // -----------------------------------------
   const fetchNotifications = async () => {
     if (!user) return;
+
     try {
       const { data: notifs } = await api.get("/notifications/my");
-      const filteredNotifs = user?.isAdmin
+      const filteredNotifs = user.isAdmin
         ? notifs.filter((n) => n.type === "admin-talk")
         : notifs;
+
       setNotifications(filteredNotifs);
     } catch (err) {
       console.error("Failed to fetch notifications:", err);
@@ -62,13 +70,13 @@ export const AuthProvider = ({ children }) => {
   // -----------------------------------------
   const login = async (email, password) => {
     try {
-      const { data } = await api.post("/users/login", { email, password }); // ✅ added `data`
-      
-      // 🔥 SAVE TOKEN
+      const { data } = await api.post("/users/login", { email, password });
+
       if (data?.token) {
         localStorage.setItem("footyhubToken", data.token);
       }
 
+      setNotifications([]);
       await loadUser();
     } catch (err) {
       console.error("Login error:", err.response?.data);
@@ -81,13 +89,17 @@ export const AuthProvider = ({ children }) => {
   // -----------------------------------------
   const register = async (name, email, password) => {
     try {
-      const { data } = await api.post("/users/register", { name, email, password });
+      const { data } = await api.post("/users/register", {
+        name,
+        email,
+        password,
+      });
 
-      // 🔥 SAVE TOKEN
       if (data?.token) {
         localStorage.setItem("footyhubToken", data.token);
       }
 
+      setNotifications([]);
       await loadUser();
     } catch (err) {
       console.error("Register error:", err.response?.data);
@@ -96,7 +108,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // -----------------------------------------
-  // Update user state
+  // Update user
   // -----------------------------------------
   const updateUser = (updatedUser) => {
     setUser(updatedUser);
@@ -127,7 +139,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       localStorage.removeItem("footyhubToken");
 
-      socket.off(); // 🔥 clear all listeners
+      socket.off();
       socket.disconnect();
 
       setUser(null);
@@ -136,39 +148,36 @@ export const AuthProvider = ({ children }) => {
   };
 
   // -----------------------------------------
-  // Socket notifications
+  // Socket notifications (SAFE VERSION)
   // -----------------------------------------
   useEffect(() => {
-    if (!socket._notificationListener) {
-      socket._notificationListener = true;
+    if (!user?._id) return;
 
-      socket.on("new-notification", (notif) => {
-        console.log("📩 NEW LIVE NOTIFICATION:", notif);
-        setNotifications((prev) => [notif, ...prev]);
-      });
-    }
-
-    const registerUser = () => {
-      if (user?._id && socket.connected) {
-        socket.emit("register-user", user._id);
-        console.log("👤 User registered for notifications:", user._id);
-      }
+    const onNotification = (notif) => {
+      console.log("📩 NEW LIVE NOTIFICATION:", notif);
+      setNotifications((prev) => [notif, ...prev]);
     };
 
-    registerUser();
+    const registerUser = () => {
+      socket.emit("register-user", user._id);
+      console.log("👤 User registered for notifications:", user._id);
+    };
 
+    socket.on("new-notification", onNotification);
     socket.on("connect", registerUser);
     socket.on("reconnect", registerUser);
 
+    if (socket.connected) registerUser();
+
     return () => {
-      socket.off("connect");
-      socket.off("reconnect");
-      if (!user?._id) socket.off("new-notification");
+      socket.off("new-notification", onNotification);
+      socket.off("connect", registerUser);
+      socket.off("reconnect", registerUser);
     };
-  }, [user]);
+  }, [user?._id]);
 
   // -----------------------------------------
-  // Notification management
+  // Notification helpers
   // -----------------------------------------
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((n) => n._id !== id));
@@ -198,4 +207,5 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => useContext(AuthContext);
 export default AuthContext;
+
 
