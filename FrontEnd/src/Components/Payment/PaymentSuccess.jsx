@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import api from "../../utils/api"; // ✅ use the preconfigured backend API
 
 export default function PaymentSuccess() {
   const { id } = useParams(); // order ID from URL
@@ -9,6 +9,7 @@ export default function PaymentSuccess() {
   useEffect(() => {
     const markPaid = async () => {
       try {
+        // Mark the order as paid using your backend
         await api.put(`/orders/${id}/pay`);
 
         Swal.fire({
@@ -41,3 +42,4 @@ export default function PaymentSuccess() {
     </div>
   );
 }
+
