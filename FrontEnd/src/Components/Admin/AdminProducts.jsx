@@ -67,7 +67,7 @@ export default function AdminProducts() {
               <tr key={p._id} className="border-t border-[#11181b]">
                 <td className="py-2 px-2">{p.name}</td>
                 <td className="py-2 px-2">{p.category}</td>
-                <td className="py-2 px-2">₹{p.price.toLocaleString()}</td>
+                <td className="py-2 px-2">₹{Number(p.price || 0).toLocaleString()}</td>
                 <td className="py-2 px-2 flex gap-2">
                   <button
                     onClick={() => navigate(`/admin/products/edit/${p._id}`)}
