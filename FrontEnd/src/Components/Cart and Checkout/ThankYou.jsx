@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
-import { ArrowLeft, ShoppingBag, MapPin, CreditCard } from "lucide-react";
+import { ShoppingBag, MapPin, CreditCard } from "lucide-react";
 
 const ThankYou = () => {
   const navigate = useNavigate();
@@ -19,7 +19,11 @@ const ThankYou = () => {
 
     const interval = setInterval(() => {
       setCountdown((c) => {
-        if (c === 1) navigate("/shop");
+        if (c <= 1) {
+          clearInterval(interval);
+          navigate("/shop");
+          return 0;
+        }
         return c - 1;
       });
     }, 1000);
@@ -124,12 +128,15 @@ const ThankYou = () => {
             <CreditCard size={24} />
             Total Paid
           </h2>
-          <p className="text-white font-bold text-xl">{formatCurrency(order.totalPrice)}</p>
+          <p className="text-white font-bold text-xl">
+            {formatCurrency(order.totalPrice)}
+          </p>
         </div>
 
         {/* Redirect / Buttons */}
         <p className="text-green-400 text-center mb-6">
-          Redirecting to shop in <span className="font-semibold">{countdown}</span> sec...
+          Redirecting to shop in{" "}
+          <span className="font-semibold">{countdown}</span> sec...
         </p>
 
         <div className="flex justify-center gap-4">
@@ -148,7 +155,6 @@ const ThankYou = () => {
         </div>
       </div>
 
-      {/* Animation */}
       <style>
         {`
           @keyframes scaleFadeIn {
@@ -165,6 +171,7 @@ const ThankYou = () => {
 };
 
 export default ThankYou;
+
 
 
 
