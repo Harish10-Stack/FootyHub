@@ -10,7 +10,6 @@ import Swal from "sweetalert2";
 import Navbar from "../Headers/ShopHeader.jsx";
 import Footer from "../Home/Footer.jsx";
 
-
 const WishlistPage = () => {
   const { addToCart, updateQuantity, cartItems, totalItems } = useCart();
   const { user } = useAuth();
@@ -21,12 +20,20 @@ const WishlistPage = () => {
   const [animatingHeart, setAnimatingHeart] = useState(null);
   const navigate = useNavigate();
 
+   // Hardcode Render backend
+  const API_BASE_URL = "https://footyhub-backend-hrqm.onrender.com/api";
+
   useEffect(() => {
     const fetchWishlist = async () => {
       if (!user) return;
       try {
-        const res = await api.get("/wishlist");
-        setWishlist(res.data);
+        const res = await fetch(`${API_BASE_URL}/wishlist`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`, // if you use token auth
+            },
+         });
+         const data = await res.json();
+        setWishlist(Array.isArray(data) ? data : [])
       } catch (err) {
         console.error("Failed to fetch wishlist:", err);
       } finally {
