@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import api from "../../utils/api.js"; // ✅ use axios instance
+import axios from "axios";
+
+const API = "https://footyhub-backend-hrqm.onrender.com/api";
 
 const ReviewPopup = ({ onClose, user, refreshReviews }) => {
   const [rating, setRating] = useState(0);
@@ -38,9 +40,11 @@ const ReviewPopup = ({ onClose, user, refreshReviews }) => {
     setSubmitting(true);
 
     try {
-      await api.post("/reviews", {
+      await axios.post(`${API}/reviews`, {
         rating,
         comment: trimmedComment,
+      }, {
+        withCredentials: true, // if your backend uses cookies/auth
       });
 
       Swal.fire({
@@ -138,4 +142,5 @@ const ReviewPopup = ({ onClose, user, refreshReviews }) => {
 };
 
 export default ReviewPopup;
+
 
