@@ -342,7 +342,7 @@ const MainPage = () => {
                 className="bg-gray-100 p-6 rounded-lg shadow-md flex flex-col items-center hover:shadow-xl transition cursor-pointer"
               >
                 <img
-                  src={`${import.meta.env.VITE_API_URL}${product.img}`}
+                  src={`https://footyhub-backend-hrqm.onrender.com${product.img}`}
                   alt={product.name}
                   className="w-full max-w-40 sm:max-w-48 md:max-w-56 h-auto object-cover rounded-lg mb-4"
                 />
