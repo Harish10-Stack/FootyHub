@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import api from "../../utils/api.js";
 import Swal from "sweetalert2";
 import NewsHeader from "../Headers/NewsHeader.jsx";
