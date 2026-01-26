@@ -35,19 +35,25 @@ const upcomingFixtures = [
   },
 ];
 
+const BACKEND_URL = "https://footyhub-backend-hrqm.onrender.com";
 const mainProducts = [
   {
     id: 1,
     name: "Football",
     price: "₹2,969",
-    img: "/uploads/Footballs/id1.webp",
+    img: `${BACKEND_URL}/uploads/Footballs/id1.webp`,
   },
-  { id: 2, name: "Jersey", price: "₹1,299", img: "/uploads/Jerseys/id19.webp" },
+  {
+    id: 2,
+    name: "Jersey",
+    price: "₹1,299",
+    img: `${BACKEND_URL}/uploads/Jerseys/id19.webp`,
+  },
   {
     id: 3,
     name: "Football Boots",
     price: "₹15,999",
-    img: "/uploads/Boots/id40.webp",
+    img: `${BACKEND_URL}/uploads/Boots/id40.webp`,
   },
 ];
 
