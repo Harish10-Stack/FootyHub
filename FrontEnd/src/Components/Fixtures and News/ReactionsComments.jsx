@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import { Trash2 } from "lucide-react";
+import api from "../../utils/api.js";
 
 const emojiList = ["👍", "❤️", "😂", "😮", "😢", "👎"];
 
@@ -10,26 +10,22 @@ const ReactionsComments = ({ fixtureId }) => {
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
-  const [reactions, setReactions] = useState({}); // { '👍': 0, '❤️': 0, ... }
+  const [reactions, setReactions] = useState({});
 
   // Fetch comments & reactions for this fixture
   const fetchData = async () => {
     try {
-      const { data: commentsData } = await axios.get(
-        `/fixtures/${fixtureId}/comments`,
-        {
-          headers: user
-            ? { Authorization: `Bearer ${localStorage.getItem("footyhubToken")}` }
-            : {},
-        }
+      const { data: commentsData } = await api.get(
+        `/fixtures/${fixtureId}/comments`
       );
 
-      // Compute emoji counts
       const { data: fixtureData } = await api.get("/fixtures");
       const fixture = fixtureData.find((f) => f._id === fixtureId);
+
       const emojiCounts = {};
       emojiList.forEach((e) => {
-        emojiCounts[e] = fixture?.reactions.filter((r) => r.emoji === e).length || 0;
+        emojiCounts[e] =
+          fixture?.reactions.filter((r) => r.emoji === e).length || 0;
       });
 
       setComments(commentsData);
@@ -56,13 +52,9 @@ const ReactionsComments = ({ fixtureId }) => {
   const handleAddComment = async () => {
     if (!commentText.trim() || !user) return;
     try {
-      await axios.post(
-        `/fixtures/${fixtureId}/comment`,
-        { text: commentText },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("footyhubToken")}` },
-        }
-      );
+      await api.post(`/fixtures/${fixtureId}/comment`, {
+        text: commentText,
+      });
       setCommentText("");
       fetchData();
     } catch (err) {
@@ -90,10 +82,17 @@ const ReactionsComments = ({ fixtureId }) => {
       {/* Comments */}
       <div className="space-y-2 max-h-64 overflow-y-auto mb-4">
         {comments.map((c) => (
-          <div key={c._id} className="p-2 bg-white rounded-lg shadow-sm flex justify-between items-start">
+          <div
+            key={c._id}
+            className="p-2 bg-white rounded-lg shadow-sm flex justify-between items-start"
+          >
             <div className="flex-1">
-              <span className="font-semibold text-green-500">{c.user.name}:</span> {c.text}
+              <span className="font-semibold text-green-500">
+                {c.user.name}:
+              </span>{" "}
+              {c.text}
             </div>
+
             {user && c.user._id === user._id && (
               <button
                 onClick={() => handleDeleteComment(c._id)}
