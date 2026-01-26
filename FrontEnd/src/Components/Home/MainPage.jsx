@@ -400,7 +400,7 @@ const MainPage = () => {
               {/* Ronaldo */}
               <div className="flex flex-col items-center bg-gray-100 p-6 sm:p-8 rounded-2xl shadow-md w-full sm:w-72 hover:shadow-xl transition-all cursor-pointer">
                 <img
-                  src="./public/Players/CR7.jpeg"
+                  src="/Players/CR7.jpeg"
                   alt="Ronaldo"
                   className="w-56 h-56 object-cover rounded-full mb-4 border-4 border-green-400 shadow-md hover:scale-105 transition-transform cursor-pointer"
                 />
