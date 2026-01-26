@@ -1,5 +1,5 @@
 import { loadStripe } from "@stripe/stripe-js";
-import axios from "axios";
+import api from "../../utils/api"; // use the api instance you already configured with backend URL
 
 const stripePromise = loadStripe("pk_test_***********************"); // PUBLISHABLE KEY
 
@@ -8,15 +8,13 @@ export default function PaymentButton({ cart, user }) {
     try {
       const stripe = await stripePromise;
 
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/payment/create-checkout-session`,
-        {
-          cartItems: cart,
-          userId: user._id,
-        },
-        { withCredentials: true }
-      );
+      // Use your preconfigured api instead of axios + process.env
+      const { data } = await api.post("/api/payment/create-checkout-session", {
+        cartItems: cart,
+        userId: user._id,
+      });
 
+      // Redirect to Stripe checkout
       window.location.href = data.url;
     } catch (err) {
       console.error("Stripe error:", err);
@@ -33,3 +31,4 @@ export default function PaymentButton({ cart, user }) {
     </button>
   );
 }
+
