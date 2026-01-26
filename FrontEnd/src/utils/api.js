@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: "https://footyhub-backend-hrqm.onrender.com",
   withCredentials: true, // ✅ REQUIRED for cookies
 });
 
