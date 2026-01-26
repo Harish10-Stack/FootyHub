@@ -30,7 +30,9 @@ const Profile = () => {
   const [passwordErrors, setPasswordErrors] = useState([]);
 
   const [avatarPreview, setAvatarPreview] = useState(
-    user?.avatar || "/uploads/avatars/default-avatar.png"
+    user?.avatar
+      ? `${import.meta.env.VITE_API_BASE_URL}${user.avatar}`
+      : "/uploads/avatars/default-avatar.png"
   );
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarChanged, setAvatarChanged] = useState(false);
@@ -38,7 +40,7 @@ const Profile = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
 
-  // Load profile from backend (removed redundant call on mount)
+  // Load profile from backend
   const fetchProfile = async () => {
     try {
       const data = await api.get("/users/profile");
@@ -47,21 +49,26 @@ const Profile = () => {
 
       setName(u.name);
       setEmail(u.email);
-      setAvatarPreview(u.avatar || "/uploads/avatars/default-avatar.png");
+      setAvatarPreview(
+        u.avatar ? `${import.meta.env.VITE_API_BASE_URL}${u.avatar}` : "/uploads/avatars/default-avatar.png"
+      );
 
       updateUser(u);
     } catch (err) {
-      // Don't logout on 401 to keep user data displayed
-      setMessage({ text: err.response?.data?.message || "Failed to refresh profile data", type: "error" });
+      setMessage({
+        text: err.response?.data?.message || "Failed to refresh profile data",
+        type: "error",
+      });
     }
   };
 
-  // Update local states when user data changes
   useEffect(() => {
     if (user) {
       setName(user.name);
       setEmail(user.email);
-      setAvatarPreview(user.avatar || "/uploads/avatars/default-avatar.png");
+      setAvatarPreview(
+        user.avatar ? `${import.meta.env.VITE_API_BASE_URL}${user.avatar}` : "/uploads/avatars/default-avatar.png"
+      );
     }
   }, [user]);
 
@@ -135,10 +142,14 @@ const Profile = () => {
       updateUser(updatedUser);
       setMessage({ text: "Profile updated!", type: "success" });
 
-      // Update local states immediately to reflect changes
+      // Update local states immediately
       setName(updatedUser.name);
       setEmail(updatedUser.email);
-      setAvatarPreview(updatedUser.avatar || "/uploads/avatars/default-avatar.png");
+      setAvatarPreview(
+        updatedUser.avatar
+          ? `${import.meta.env.VITE_API_BASE_URL}${updatedUser.avatar}`
+          : "/uploads/avatars/default-avatar.png"
+      );
 
       setStagedName(null);
       setStagedEmail(null);
@@ -370,7 +381,7 @@ const Profile = () => {
                     onChange={handleNewPasswordChange}
                     placeholder="New password"
                     className={`w-full bg-transparent border-b p-2 text-white focus:outline-none focus:border-green-400 ${
-                      passwordErrors.length > 0 ? 'border-red-500' : 'border-gray-700'
+                      passwordErrors.length > 0 ? "border-red-500" : "border-gray-700"
                     }`}
                   />
                   {passwordErrors.length > 0 && (
