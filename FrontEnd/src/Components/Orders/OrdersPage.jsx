@@ -157,7 +157,7 @@ const OrdersPage = () => {
                     onClick={() => navigate(`/product/${item.product._id}`)}
                   >
                     <img
-                      src={`${import.meta.env.VITE_API_URL}${item.product.img}`}
+                      src={`https://footyhub-backend-hrqm.onrender.com${item.product.img}`}
                       alt={item.product.name}
                       className="w-full max-w-24 h-auto object-cover rounded-xl shadow-lg"
                     />
