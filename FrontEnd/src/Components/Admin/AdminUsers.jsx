@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import api from "../../utils/api.js";
 import Swal from "sweetalert2";
 import { Trash2 } from "lucide-react";
