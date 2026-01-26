@@ -8,12 +8,11 @@ import { useAuth } from "../Explore/AuthContext.jsx";
 import { ShoppingCart, Plus, Minus, Trash2, MapPin, CreditCard, ArrowRight } from "lucide-react";
 
 const Cart = () => {
-  const { cartItems, removeFromCart, updateQuantity, clearCart, totalAmount } =
-    useCart();
+  const { cartItems, removeFromCart, updateQuantity, clearCart, totalAmount } = useCart();
   const { user, saveDeliveryAddress } = useAuth();
   const navigate = useNavigate();
 
-  if (user && user.isAdmin) {
+  if (user?.isAdmin) {
     return (
       <>
         <CartHeader quote="🛒 Every cart matters!" />
@@ -45,14 +44,10 @@ const Cart = () => {
   });
   const [addressSaved, setAddressSaved] = useState(false);
 
-  const handleChange = (e) =>
-    setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
+  const handleChange = (e) => setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
 
   const handleSaveAddress = async () => {
-    // Check if all fields are filled
-    const allFilled = Object.values(shippingInfo).every(
-      (value) => value.trim() !== ""
-    );
+    const allFilled = Object.values(shippingInfo).every((v) => v.trim() !== "");
     if (!allFilled) {
       Swal.fire({
         icon: "warning",
@@ -64,7 +59,6 @@ const Cart = () => {
     }
 
     try {
-      // Save to backend user profile
       await saveDeliveryAddress(shippingInfo);
       setAddressSaved(true);
       Swal.fire({
@@ -108,11 +102,10 @@ const Cart = () => {
             🛒 Your Cart
           </h1>
 
-          {/* Professional prompt to add more products with Shop button */}
+          {/* Shop Prompt */}
           {cartItems.length > 0 && (
-            <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-5 sm:p-8 rounded-2xl ...">
+            <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-5 sm:p-8 rounded-2xl flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
               <span className="text-base sm:text-xl">
-
                 Looking to expand your collection? Continue shopping to add more products to your cart.
               </span>
               <button
@@ -128,13 +121,9 @@ const Cart = () => {
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-8">
               {cartItems.map((item) => {
-                const price =
-                  typeof item.product?.price === "number"
-                    ? item.product.price
-                    : parseFloat(
-                        String(item.product?.price || "0").replace(/[₹,]/g, "")
-                      ) || 0;
-
+                const price = Number(
+                  String(item.product?.price || 0).replace(/[₹,]/g, "")
+                );
                 const itemTotal = price * (item.quantity || 1);
 
                 return (
@@ -149,15 +138,9 @@ const Cart = () => {
                     />
                     <div className="flex-1 md:ml-10 flex flex-col justify-between h-full">
                       <div>
-                        <h3 className="text-2xl font-bold text-white mb-3">
-                          {item.product?.name}
-                        </h3>
-                        {item.size && (
-                          <p className="text-slate-300 mt-2 text-lg">Size: {item.size}</p>
-                        )}
-                        <p className="text-emerald-400 font-bold mt-4 text-xl">
-                          ₹{price.toLocaleString()}
-                        </p>
+                        <h3 className="text-2xl font-bold text-white mb-3">{item.product?.name}</h3>
+                        {item.size && <p className="text-slate-300 mt-2 text-lg">Size: {item.size}</p>}
+                        <p className="text-emerald-400 font-bold mt-4 text-xl">₹{price.toLocaleString()}</p>
                       </div>
                       <div className="flex flex-wrap items-center mt-6 gap-4 sm:gap-8">
                         <div className="flex items-center bg-slate-600 rounded-xl shadow-lg">
@@ -165,7 +148,7 @@ const Cart = () => {
                             onClick={() =>
                               updateQuantity(
                                 item.product._id,
-                                item.quantity - 1 > 0 ? item.quantity - 1 : 1,
+                                Math.max(item.quantity - 1, 1),
                                 item.size
                               )
                             }
@@ -176,11 +159,7 @@ const Cart = () => {
                           <span className="px-8 py-3 font-semibold text-lg">{item.quantity}</span>
                           <button
                             onClick={() =>
-                              updateQuantity(
-                                item.product._id,
-                                item.quantity + 1,
-                                item.size
-                              )
+                              updateQuantity(item.product._id, item.quantity + 1, item.size)
                             }
                             className="px-5 py-3 hover:bg-slate-500 transition-all duration-200 rounded-r-xl cursor-pointer"
                           >
@@ -188,9 +167,7 @@ const Cart = () => {
                           </button>
                         </div>
                         <button
-                          onClick={() =>
-                            removeFromCart(item.product._id, item.size)
-                          }
+                          onClick={() => removeFromCart(item.product._id, item.size)}
                           className="text-red-400 hover:text-red-300 transition-all duration-200 font-semibold cursor-pointer flex items-center gap-2 text-lg"
                         >
                           <Trash2 size={20} />
@@ -199,9 +176,7 @@ const Cart = () => {
                       </div>
                     </div>
                     <div className="mt-6 md:mt-0 md:ml-10 text-right">
-                      <p className="text-3xl font-bold text-emerald-400">
-                        ₹{itemTotal.toLocaleString()}
-                      </p>
+                      <p className="text-3xl font-bold text-emerald-400">₹{itemTotal.toLocaleString()}</p>
                     </div>
                   </div>
                 );
@@ -215,20 +190,13 @@ const Cart = () => {
                   <MapPin size={32} />
                   Shipping Address
                 </h2>
-                {[
-                  { key: "fullName", label: "Name" },
-                  { key: "address", label: "Address" },
-                  { key: "city", label: "City" },
-                  { key: "state", label: "State" },
-                  { key: "postalCode", label: "PIN" },
-                  { key: "phone", label: "Phone" },
-                ].map((field) => (
+                {["fullName","address","city","state","postalCode","phone"].map((key) => (
                   <input
-                    key={field.key}
+                    key={key}
                     type="text"
-                    name={field.key}
-                    placeholder={field.label}
-                    value={shippingInfo[field.key] || ""}
+                    name={key}
+                    placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+                    value={shippingInfo[key]}
                     onChange={handleChange}
                     className="w-full p-4 sm:p-5 rounded-xl bg-slate-600 text-white border border-slate-500 focus:border-emerald-400 focus:outline-none transition-all duration-200 placeholder-slate-400 mb-4"
                   />
@@ -243,9 +211,7 @@ const Cart = () => {
 
               {addressSaved && (
                 <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-8 rounded-2xl shadow-2xl border border-slate-600">
-                  <h2 className="text-3xl font-bold text-emerald-400 mb-6">
-                    Order Summary
-                  </h2>
+                  <h2 className="text-3xl font-bold text-emerald-400 mb-6">Order Summary</h2>
                   <div className="space-y-4">
                     <div className="flex justify-between text-lg">
                       <span className="text-slate-300">Subtotal:</span>
@@ -290,6 +256,7 @@ const Cart = () => {
 };
 
 export default Cart;
+
 
 
 
