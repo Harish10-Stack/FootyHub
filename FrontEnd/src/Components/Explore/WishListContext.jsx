@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext.jsx";
 import axios from "axios";
+import api from "../../utils/api.js"; // ✅ use axios instance
 
 const WishlistContext = createContext();
 
@@ -21,9 +22,7 @@ export const WishlistProvider = ({ children }) => {
       }
 
       try {
-        const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/wishlist", {
-          withCredentials: true,
-        });
+        const res = await api.get("/wishlist");
         setWishlist(res.data || []);
       } catch (err) {
         console.error("Failed to fetch wishlist:", err);
@@ -41,11 +40,7 @@ export const WishlistProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const res = await axios.post(
-        "https://footyhub-backend-cqir.onrender.com/api/wishlist",
-        { productId },
-        { withCredentials: true }
-      );
+      const res = await api.post("/wishlist", { productId });
       setWishlist(res.data || []);
     } catch (err) {
       console.error(err);
@@ -57,9 +52,7 @@ export const WishlistProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const res = await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/wishlist/${productId}`, {
-        withCredentials: true,
-      });
+      const res = await api.delete(`/wishlist/${productId}`);
       setWishlist(res.data || []);
     } catch (err) {
       console.error(err);

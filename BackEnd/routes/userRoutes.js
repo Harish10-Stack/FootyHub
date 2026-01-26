@@ -51,10 +51,23 @@ router.put("/delivery-address", protect, updateDeliveryAddress);
 // Delete Account (User self-delete)
 router.delete("/delete", protect, async (req, res) => {
   try {
-    const user = req.user;
+    const { currentPassword } = req.body;
+
+    if (!currentPassword) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+
+    // Fetch user with password for verification
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    // Verify password
+    const isPasswordValid = await user.matchPassword(currentPassword);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid password" });
     }
 
     await user.deleteOne();

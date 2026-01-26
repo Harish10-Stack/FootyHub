@@ -3,7 +3,7 @@
     id: 1,
     name: "Adidas Tiro League Thermally Bonded Football",
     price: "2969",
-    img: "/uploads/Football/id1.webp",
+    img: "/uploads/Footballs/id1.webp",
     category: "Football",
     description: [
       "Dominate the pitch in all weather with the Adidas Tiro League Thermally Bonded Football.",
@@ -17,7 +17,7 @@
     id: 2,
     name: "Nike Pitch Football Ball",
     price: "1345",
-    img: "/uploads/Football/id2.webp",
+    img: "/uploads/Footballs/id2.webp",
     category: "Football",
     description: [
       "Durable machine-stitched casing: Ensures long-lasting performance and shape retention.",
@@ -30,7 +30,7 @@
     id: 3,
     name: "Nivia Dominator 3.0 Football",
     price: "1529",
-    img: "/uploads/Football/id3.webp",
+    img: "/uploads/Footballs/id3.webp",
     category: "Football",
     description: [
       "32-panel, thermo-bonded construction for durability and consistent flight.",
@@ -43,7 +43,7 @@
     id: 4,
     name: "Nivia Force PU Futsal Football",
     price: "1278",
-    img: "/uploads/Football/id4.webp",
+    img: "/uploads/Footballs/id4.webp",
     category: "Football",
     description: [
       "Hand Stitched: Provides enhanced shape retention and longevity. The Nivia Force PU Futsal Football is crafted for consistent performance..",
@@ -56,7 +56,7 @@
     id: 5,
     name: "Puma King Ball Football",
     price: "1799",
-    img: "/uploads/Football/id5.webp",
+    img: "/uploads/Footballs/id5.webp",
     category: "Football",
     description: [
       "Classic design with modern performance features.",
@@ -69,7 +69,7 @@
     id: 6,
     name: "Nivia Storm Moulded Football",
     price: "653",
-    img: "/uploads/Football/id6.webp",
+    img: "/uploads/Footballs/id6.webp",
     category: "Football",
     description: [
       "Suitable for All Skill Levels: Perfect for players of all abilities. The Nivia Storm Moulded Football will help you improve your game..",
@@ -82,7 +82,7 @@
     id: 7,
     name: "Nivia Latino Shining PU Football",
     price: "1017",
-    img: "/uploads/Football/id7.webp",
+    img: "/uploads/Footballs/id7.webp",
     category: "Football",
     description: [
       "Vibrant Latino-Inspired Design: Makes a bold statement on the field. The Nivia Latino Shining PU Football shows your flair.",
@@ -95,7 +95,7 @@
     id: 8,
     name: "Cosco Premier Football",
     price: "900",
-    img: "/uploads/Football/id8.webp",
+    img: "/uploads/Footballs/id8.webp",
     category: "Football",
     description: [
       "Suitable for All Skill Levels: Perfect for players from beginners to professionals.",
@@ -108,7 +108,7 @@
     id: 9,
     name: "Nivia Simbolo Football",
     price: "1314",
-    img: "/uploads/Football/id9.webp",
+    img: "/uploads/Footballs/id9.webp",
     category: "Football",
     description: [
       "Weight & Size: Optimized for soccer precision and accuracy.",
@@ -121,7 +121,7 @@
     id: 10,
     name: "Cosco Super Star Football",
     price: "1197",
-    img: "/uploads/Football/id10.webp",
+    img: "/uploads/Footballs/id10.webp",
     category: "Football",
     description: [
       "All Skill Levels: Perfect for beginners and experienced players alike.",

@@ -143,7 +143,7 @@ const Cart = () => {
                     className="flex flex-col md:flex-row justify-between items-center bg-gradient-to-r from-slate-800 to-slate-700 p-5 sm:p-8 rounded-2xl shadow-2xl border border-slate-600 hover:shadow-3xl transition-all duration-300 hover:border-emerald-500/50"
                   >
                     <img
-                      src={`https://footyhub-backend-cqir.onrender.com${item.product?.img}`}
+                      src={`${import.meta.env.VITE_API_URL}${item.product?.img}`}
                       alt={item.product?.name}
                       className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-2xl mb-6 md:mb-0 shadow-xl border border-slate-600"
                     />

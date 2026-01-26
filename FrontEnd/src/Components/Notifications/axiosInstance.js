@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://footyhub-backend-cqir.onrender.com", // change if your backend uses different port
+  baseURL: "http://localhost:5000", // change if your backend uses different port
   withCredentials: true
 });
 

@@ -1,8 +1,9 @@
 // src/Components/Login/ForgotPassword.jsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import api from "../../utils/api.js";
 
-const API = "https://footyhub-backend-cqir.onrender.com";
+const API = import.meta.env.VITE_API_BASE_URL + "/api";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");

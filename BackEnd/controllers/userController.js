@@ -49,9 +49,10 @@ export const loginUser = asyncHandler(async (req, res) => {
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
 
     // Clear unread notifications for admin on login
     if (user.isAdmin) {
@@ -96,9 +97,10 @@ export const registerUser = asyncHandler(async (req, res) => {
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
 
     res.status(201).json({
       _id: user._id,

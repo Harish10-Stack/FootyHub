@@ -5,6 +5,7 @@ import { useCart } from "../Cart and Checkout/CartContext.jsx";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import { useWishlist } from "../Explore/WishListContext.jsx";
 import LoginModal from "../Login/LoginModal.jsx";
+import DeleteAccountModal from "../Login/DeleteAccountModal.jsx";
 import Swal from "sweetalert2";
 import NotificationBell from "../Notifications/NotificationBell.jsx";
 
@@ -18,6 +19,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [animatingHeart, setAnimatingHeart] = useState(false);
 
@@ -200,7 +202,7 @@ const Header = () => {
                   </button>
 
                   <button
-                    onClick={() => setModalOpen(true)}
+                    onClick={() => setDeleteModalOpen(true)}
                     className="flex items-center px-4 py-2 w-full hover:bg-gray-800 hover:text-red-500 transition cursor-pointer"
                   >
                     <Trash2 size={18} className="mr-2" /> Delete Account
@@ -240,6 +242,10 @@ const Header = () => {
       )}
 
       <LoginModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <DeleteAccountModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+      />
     </>
   );
 };

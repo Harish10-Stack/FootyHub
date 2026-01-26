@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("https://footyhub-backend-cqir.onrender.com", {
+const socket = io("http://localhost:5000", {
   withCredentials: true,
   autoConnect: true,
   transports: ['websocket', 'polling'], // Try websocket first, fallback to polling
@@ -31,4 +31,3 @@ if (!socket._initialized) {
 }
 
 export default socket;
-

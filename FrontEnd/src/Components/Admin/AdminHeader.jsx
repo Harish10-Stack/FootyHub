@@ -1,8 +1,10 @@
 import React from "react";
-import { Search, LogOut } from "lucide-react";
+import { Search, LogOut, Home } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Explore/AuthContext.jsx";
 
 export default function AdminHeader({ collapsed, setCollapsed, title }) {
+  const navigate = useNavigate();
   const { logout } = useAuth();
 
   return (
@@ -30,11 +32,11 @@ export default function AdminHeader({ collapsed, setCollapsed, title }) {
         <div className="px-3 py-1 bg-[#0f1720] border border-[#1b2226] rounded text-sm">Admin</div>
 
         <button
-          onClick={logout}
-          className="p-2 rounded hover:bg-[#0f1720] text-gray-300 hover:text-red-400"
-          title="Logout"
+          onClick={() => navigate('/')}
+          className="p-2 rounded hover:bg-[#0f1720] text-gray-300 hover:text-blue-400"
+          title="Back to Home"
         >
-          <LogOut size={18} />
+          <Home size={18} />
         </button>
       </div>
     </header>

@@ -2,48 +2,65 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useParams, useNavigate } from "react-router-dom";
+import api from "../../utils/api.js";
 
 export default function AdminEditProduct() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", category: "", price: "", description: "" });
+  const [form, setForm] = useState({
+    name: "",
+    category: "",
+    price: "",
+    description: "",
+  });
   const [image, setImage] = useState(null);
   const [currentImage, setCurrentImage] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`https://footyhub-backend-cqir.onrender.com/api/products/${id}`, { withCredentials: true });
-        setForm({ name: data.name, category: data.category, price: data.price, description: data.description });
+        const { data } = await api.get(`/products/${id}`);
+        setForm({
+          name: data.name,
+          category: data.category,
+          price: data.price,
+          description: data.description,
+        });
         setCurrentImage(data.img);
       } catch (err) {
         Swal.fire("Error", "Failed to fetch product", "error");
       }
     };
+
     fetchProduct();
   }, [id]);
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleImageChange = e => setImage(e.target.files[0]);
+  const handleImageChange = (e) => setImage(e.target.files[0]);
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('name', form.name);
-    formData.append('category', form.category);
-    formData.append('price', form.price);
-    formData.append('description', form.description);
-    if (image) formData.append('img', image);
+    formData.append("name", form.name);
+    formData.append("category", form.category);
+    formData.append("price", form.price);
+    formData.append("description", form.description);
+    if (image) formData.append("img", image);
 
     try {
-      await axios.put(`https://footyhub-backend-cqir.onrender.com/api/products/${id}`, formData, {
-        withCredentials: true,
-        headers: { 'Content-Type': 'multipart/form-data' }
+      await api.put(`/products/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-       Swal.fire("Success", "Product updated successfully", "success");
+
+      Swal.fire("Success", "Product updated successfully", "success");
     } catch (err) {
-      Swal.fire("Error", err?.response?.data?.message || "Failed to update product", "error");
+      Swal.fire(
+        "Error",
+        err?.response?.data?.message || "Failed to update product",
+        "error",
+      );
     }
   };
 
@@ -53,7 +70,7 @@ export default function AdminEditProduct() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold text-white">Edit Product</h1>
           <button
-            onClick={() => navigate('/admin/products')}
+            onClick={() => navigate("/admin/products")}
             className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
           >
             Back to Products
@@ -126,7 +143,7 @@ export default function AdminEditProduct() {
             {currentImage && (
               <div className="mb-4">
                 <img
-                  src={`https://footyhub-backend-cqir.onrender.com${currentImage}`}
+                  src={`${import.meta.env.VITE_API_BASE_URL}${currentImage}`}
                   alt="Current Product"
                   className="w-32 h-32 object-cover rounded-lg border border-[#23303a]"
                 />
@@ -153,7 +170,7 @@ export default function AdminEditProduct() {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/admin/products')}
+              onClick={() => navigate("/admin/products")}
               className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
             >
               Cancel

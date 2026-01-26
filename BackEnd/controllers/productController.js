@@ -31,8 +31,10 @@ export const getProductById = async (req, res) => {
 export const createProduct = async (req, res) => {
   const { name, description, price, img, category, stock } = req.body;
   const imagePath = req.file ? `/uploads/${category}/${req.file.filename}` : img;
+  // Ensure description is an array
+  const descriptionArray = Array.isArray(description) ? description : [description];
   try {
-    const product = new Product({ name, description, price, img: imagePath, category, stock });
+    const product = new Product({ name, description: descriptionArray, price, img: imagePath, category, stock });
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
   } catch (error) {
@@ -58,7 +60,12 @@ export const updateProduct = async (req, res) => {
 
     // Only update the fields provided in req.body
     Object.keys(req.body).forEach((key) => {
-      product[key] = req.body[key];
+      if (key === 'description') {
+        // Ensure description is an array
+        product[key] = Array.isArray(req.body[key]) ? req.body[key] : [req.body[key]];
+      } else if (key !== 'img') { // Don't update img from body if file is uploaded
+        product[key] = req.body[key];
+      }
     });
 
     const updatedProduct = await product.save();

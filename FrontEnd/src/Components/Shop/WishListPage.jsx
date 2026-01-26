@@ -4,7 +4,7 @@ import { ShoppingCart, Heart, Minus, Plus, Trophy, Star, Zap, Award } from "luci
 import { useCart } from "../Cart and Checkout/CartContext.jsx";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import { useWishlist } from "../Explore/WishListContext.jsx";
-import axios from "axios";
+import api from "../../utils/api.js";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 import Navbar from "../Headers/ShopHeader.jsx";
@@ -25,7 +25,7 @@ const WishlistPage = () => {
     const fetchWishlist = async () => {
       if (!user) return;
       try {
-        const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/wishlist", { withCredentials: true });
+        const res = await api.get("/wishlist");
         setWishlist(res.data);
       } catch (err) {
         console.error("Failed to fetch wishlist:", err);
@@ -195,7 +195,7 @@ const WishlistPage = () => {
                   {/* Product Image */}
                   <div className="relative overflow-hidden rounded-t-3xl">
                     <img
-                      src={`https://footyhub-backend-cqir.onrender.com${product.img}`}
+                      src={`http://localhost:5000${product.img}`}
                       alt={product.name}
                       className="w-full h-80 object-cover group-hover:scale-110 transition-all duration-700 rounded-t-3xl"
                     />

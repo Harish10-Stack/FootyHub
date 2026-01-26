@@ -3,11 +3,11 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "../Cart and Checkout/CartContext.jsx";
 import { useNavigate } from "react-router-dom";
 import CheckoutHeader from "../Headers/CheckOutHeader.jsx";
-import axios from "axios";
+import api from "../../utils/api.js";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import Swal from "sweetalert2";
 import { ShoppingBag, ArrowLeft, MapPin, CreditCard } from "lucide-react";
-import socket from "../utils/socket.js";
+import socket from "../../utils/socket.js";
 
 const CheckoutPage = () => {
   const { cartItems, totalAmount, clearCart } = useCart();
@@ -134,13 +134,7 @@ const CheckoutPage = () => {
       console.log("Creating order with payload:", orderData);
 
       // Send POST request to backend
-      const res = await axios.post(
-        "https://footyhub-backend-cqir.onrender.com/api/orders",
-        orderData,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await api.post("/orders", orderData);
 
       const createdOrder = res.data;
 
@@ -198,7 +192,7 @@ const CheckoutPage = () => {
                     onClick={() => navigate(`/product/${item.product._id}`)}
                   >
                     <img
-                      src={`https://footyhub-backend-cqir.onrender.com${item.product?.img}`}
+                      src={`${import.meta.env.VITE_API_URL}${item.product?.img}`}
                       alt={item.product?.name}
                       className="w-full max-w-36 h-auto object-cover rounded-2xl mb-6 md:mb-0 shadow-xl border border-slate-600"
                     />

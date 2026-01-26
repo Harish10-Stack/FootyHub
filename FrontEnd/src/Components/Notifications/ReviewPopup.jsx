@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import api from "../../utils/api";
 
 export default function ReviewPopup({ orderId, notifId, onSubmit, onClose }) {
   const [rating, setRating] = useState(0);
@@ -18,20 +19,12 @@ export default function ReviewPopup({ orderId, notifId, onSubmit, onClose }) {
       if (onSubmit) {
         await onSubmit({ orderId, rating, comment });
       } else {
-        await axios.post(
-          "https://footyhub-backend-cqir.onrender.com/api/reviews",
-          { orderId, rating, comment },
-          { withCredentials: true }
-        );
+        await api.post("/reviews", { orderId, rating, comment });
       }
 
       // Mark the notification as read if notifId is provided
       if (notifId) {
-        await axios.put(
-          `https://footyhub-backend-cqir.onrender.com/api/notifications/read/${notifId}`,
-          {},
-          { withCredentials: true }
-        );
+        await api.put(`/notifications/read/${notifId}`);
       }
 
       // Close the popup

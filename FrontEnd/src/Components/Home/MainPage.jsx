@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import Header from "../Home/Header.jsx";
 import Footer from "../Home/Footer.jsx";
 import "./MainPage.css";
 import ReviewPopup from "../Reviews/SiteReviewPopup.jsx";
+import api from "../../utils/api.js";
 
 const upcomingFixtures = [
   {
@@ -69,8 +69,8 @@ const MainPage = () => {
   useEffect(() => {
     const fetchPollData = async () => {
       try {
-        const response = await axios.get(
-          "https://footyhub-backend-cqir.onrender.com/api/poll",
+        const response = await api.get(
+          "/poll",
         );
         setVotes({
           messi: response.data.totalMessi,
@@ -101,8 +101,8 @@ const MainPage = () => {
   // 🔹 Fetch all reviews
   const fetchReviews = async () => {
     try {
-      const response = await axios.get(
-        "https://footyhub-backend-cqir.onrender.com/api/reviews",
+      const response = await api.get(
+        "/reviews",
       );
       const sorted = response.data.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
@@ -136,14 +136,7 @@ const MainPage = () => {
 
     if (result.isConfirmed) {
       try {
-        const token = localStorage.getItem("footyhubToken");
-        await axios.delete(
-          `https://footyhub-backend-cqir.onrender.com/api/reviews/${reviewId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true,
-          },
-        );
+        await api.delete(`/reviews/${reviewId}`);
 
         Swal.fire({
           icon: "success",
@@ -177,15 +170,8 @@ const MainPage = () => {
     if (voted) return;
 
     try {
-      const token = localStorage.getItem("footyhubToken");
-      const response = await axios.post(
-        "https://footyhub-backend-cqir.onrender.com/api/poll/vote",
-        { player },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        },
-      );
+      const response = await api.post("/poll/vote", { player });
+
       setVotes({
         messi: response.data.totalMessi,
         ronaldo: response.data.totalRonaldo,
@@ -217,6 +203,17 @@ const MainPage = () => {
 
   const handleLoadMoreReviews = () => {
     setVisibleReviews((prev) => prev + 5);
+  };
+
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, i) => (
+      <span
+        key={i}
+        className={i < rating ? "text-yellow-400" : "text-gray-300"}
+      >
+        ★
+      </span>
+    ));
   };
 
   return (
@@ -339,7 +336,7 @@ const MainPage = () => {
                 className="bg-gray-100 p-6 rounded-lg shadow-md flex flex-col items-center hover:shadow-xl transition cursor-pointer"
               >
                 <img
-                  src={`https://footyhub-backend-cqir.onrender.com${product.img}`}
+                  src={`${import.meta.env.VITE_API_URL}${product.img}`}
                   alt={product.name}
                   className="w-full max-w-40 sm:max-w-48 md:max-w-56 h-auto object-cover rounded-lg mb-4"
                 />
@@ -378,7 +375,7 @@ const MainPage = () => {
               {/* Messi */}
               <div className="flex flex-col items-center bg-gray-100 p-6 sm:p-8 rounded-2xl shadow-md w-full sm:w-72 hover:shadow-xl transition-all cursor-pointer">
                 <img
-                  src="./public/Players/LEO.jpeg"
+                  src="/Players/LEO.jpeg"
                   alt="Messi"
                   className="w-56 h-56 object-cover rounded-full mb-4 border-4 border-green-400 shadow-md hover:scale-105 transition-transform cursor-pointer"
                 />

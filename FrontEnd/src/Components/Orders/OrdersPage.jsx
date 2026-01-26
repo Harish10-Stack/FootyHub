@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api.js";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -52,10 +52,7 @@ const OrdersPage = () => {
     const fetchOrders = async () => {
       if (!user) return;
       try {
-        const res = await axios.get(
-          "https://footyhub-backend-cqir.onrender.com/api/orders/my-orders",
-          { withCredentials: true }
-        );
+        const res = await api.get("/orders/my-orders");
         setOrders(res.data);
         setLoading(false);
       } catch (err) {
@@ -160,7 +157,7 @@ const OrdersPage = () => {
                     onClick={() => navigate(`/product/${item.product._id}`)}
                   >
                     <img
-                      src={`https://footyhub-backend-cqir.onrender.com/uploads/${item.product.img.replace(/^\/uploads\//, '')}`}
+                      src={`${import.meta.env.VITE_API_URL}${item.product.img}`}
                       alt={item.product.name}
                       className="w-full max-w-24 h-auto object-cover rounded-xl shadow-lg"
                     />

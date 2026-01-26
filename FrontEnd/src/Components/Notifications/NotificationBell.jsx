@@ -6,8 +6,9 @@ import ReviewPopup from "./ReviewPopup.jsx";
 import SendNotification from "./SendNotification.jsx";
 import { notificationTheme } from "../Notifications/NotificationStyles.js";
 import { useAuth } from "../Explore/AuthContext.jsx"; // For user info
-import socket from "../utils/socket.js";
-
+import socket from "../../utils/socket.js";
+import api from "../../utils/api.js";
+  
 function NotificationItem({ notif, onClose, onSendMessage }) {
   const style = notificationTheme[notif.type] || notificationTheme.system;
 
@@ -91,19 +92,25 @@ export default function NotificationBell() {
 
 
   const removeNotification = async (id) => {
+    removeFromContext(id); // Optimistic update
     try {
-      await axios.put(`https://footyhub-backend-cqir.onrender.com/api/notifications/read/${id}`, {}, { withCredentials: true });
-      removeFromContext(id);
+      await api.delete(`/notifications/delete/${id}`);
     } catch (err) {
       console.error(err);
+      // If failed, could add back, but for now leave removed
     }
   };
 
   const removeAllNotifications = async () => {
+    clearNotifications(); // Optimistic update
     setClearing(true);
     setTimeout(async () => {
-      await axios.delete("https://footyhub-backend-cqir.onrender.com/api/notifications/delete-all", { withCredentials: true });
-      clearNotifications();
+      try {
+        await api.delete("/notifications/delete-all");
+      } catch (err) {
+        console.error(err);
+        // If failed, could refetch, but for now leave cleared
+      }
       setClearing(false);
     }, 300);
   };

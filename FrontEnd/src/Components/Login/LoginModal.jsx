@@ -39,15 +39,21 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
       } else {
         if (password !== confirmPassword) {
           setMessage({ text: "Passwords do not match", type: "error" });
+          setLoading(false);
           return;
         }
+
         await register(name, email, password);
         setMessage({ text: "Registration successful!", type: "success" });
         onSuccess && onSuccess();
         onClose();
       }
     } catch (err) {
-      setMessage({ text: err.message, type: "error" });
+      setMessage({
+        text:
+          err.response?.data?.message || err.message || "Something went wrong",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -63,11 +69,13 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
         </h2>
 
         {message.text && (
-          <div className={`mb-4 p-3 rounded-md border ${
-            message.type === "error"
-              ? "bg-red-900/50 border-red-700 text-red-200"
-              : "bg-green-900/40 border-green-600 text-green-200"
-          }`}>
+          <div
+            className={`mb-4 p-3 rounded-md border ${
+              message.type === "error"
+                ? "bg-red-900/50 border-red-700 text-red-200"
+                : "bg-green-900/40 border-green-600 text-green-200"
+            }`}
+          >
             {message.text}
           </div>
         )}
@@ -101,7 +109,9 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
               placeholder="Password"
               required
               className={`w-full p-3 rounded bg-transparent border text-white focus:outline-none focus:border-green-400 ${
-                passwordErrors.length > 0 && !isLogin ? 'border-red-500' : 'border-gray-700'
+                passwordErrors.length > 0 && !isLogin
+                  ? "border-red-500"
+                  : "border-gray-700"
               }`}
             />
             {passwordErrors.length > 0 && !isLogin && (
@@ -129,7 +139,13 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
             disabled={loading}
             className="w-full bg-green-600 hover:bg-green-700 text-black font-semibold py-2 rounded-lg transition disabled:opacity-60"
           >
-            {loading ? (isLogin ? "Logging in..." : "Registering...") : (isLogin ? "Login" : "Register")}
+            {loading
+              ? isLogin
+                ? "Logging in..."
+                : "Registering..."
+              : isLogin
+                ? "Login"
+                : "Register"}
           </button>
         </form>
 
@@ -138,7 +154,9 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
             onClick={() => setIsLogin(!isLogin)}
             className="text-green-400 hover:text-emerald-300 transition"
           >
-            {isLogin ? "Need an account? Register" : "Already have an account? Login"}
+            {isLogin
+              ? "Need an account? Register"
+              : "Already have an account? Login"}
           </button>
         </div>
 

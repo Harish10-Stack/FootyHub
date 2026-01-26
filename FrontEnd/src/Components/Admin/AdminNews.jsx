@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api.js";
 import Swal from "sweetalert2";
 
 export default function AdminNews() {
@@ -14,7 +14,7 @@ export default function AdminNews() {
 
   const fetchNews = async () => {
     try {
-      const { data } = await axios.get("https://footyhub-backend-cqir.onrender.com/api/news");
+      const { data } = await api.get("/news");
       setNews(data);
     } catch (error) {
       Swal.fire("Error", "Failed to fetch news", "error");
@@ -35,14 +35,10 @@ export default function AdminNews() {
     if (e) e.preventDefault();
     try {
       if (editingNews) {
-        await axios.put(
-          `https://footyhub-backend-cqir.onrender.com/api/news/${editingNews._id}`,
-          formData,
-          { withCredentials: true }
-        );
+        await api.put(`/news/${editingNews._id}`, formData);
         Swal.fire("Success", "News updated successfully", "success");
       } else {
-        await axios.post("https://footyhub-backend-cqir.onrender.com/api/news", formData, { withCredentials: true });
+        await api.post("/news", formData);
         Swal.fire("Success", "News added successfully", "success");
       }
       setFormData({ title: "", description: "", date: "" });
@@ -73,7 +69,7 @@ export default function AdminNews() {
     });
     if (!isConfirmed) return;
     try {
-      await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/news/${id}`, { withCredentials: true });
+      await api.delete(`/news/${id}`);
       setNews(prevNews => prevNews.filter((n) => n._id !== id));
       Swal.fire("Deleted", "News item removed", "success");
     } catch (error) {

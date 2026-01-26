@@ -30,8 +30,10 @@ const fixtureSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Fixture = mongoose.models.Fixture || mongoose.model("Fixture", fixtureSchema);
+// Explicitly tell Mongoose to use the "fixtures" collection in Atlas
+const Fixture = mongoose.models.Fixture || mongoose.model("Fixture", fixtureSchema, "fixtures");
 export default Fixture;
+
 
 
 

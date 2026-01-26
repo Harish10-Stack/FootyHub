@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import api from "../../utils/api.js";
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({ totalUsers: 0, totalProducts: 0, totalOrders: 0 });
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalProducts: 0,
+    totalOrders: 0,
+  });
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -11,10 +16,11 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const statsRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/admin/stats", { withCredentials: true });
+
+        const statsRes = await api.get("/admin/stats");
         setStats(statsRes.data);
 
-        const ordersRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/orders/all", { withCredentials: true });
+        const ordersRes = await api.get("/orders/all");
         setRecentOrders(ordersRes.data.slice(0, 6));
       } catch (err) {
         console.error(err);
@@ -61,18 +67,26 @@ export default function AdminDashboard() {
           </thead>
           <tbody>
             {recentOrders.length > 0 ? (
-              recentOrders.map(o => (
+              recentOrders.map((o) => (
                 <tr key={o._id} className="border-t border-[#11181b]">
                   <td className="py-3 px-2 text-sm">{o._id.slice(-6)}</td>
                   <td className="py-3 px-2 text-sm">{o.user?.name || "—"}</td>
-                  <td className="py-3 px-2 text-sm">₹{Number(o.totalPrice).toLocaleString()}</td>
-                  <td className="py-3 px-2 text-sm">{o.isPaid ? "Yes" : "No"}</td>
-                  <td className="py-3 px-2 text-sm">{new Date(o.createdAt).toLocaleDateString()}</td>
+                  <td className="py-3 px-2 text-sm">
+                    ₹{Number(o.totalPrice).toLocaleString()}
+                  </td>
+                  <td className="py-3 px-2 text-sm">
+                    {o.isPaid ? "Yes" : "No"}
+                  </td>
+                  <td className="py-3 px-2 text-sm">
+                    {new Date(o.createdAt).toLocaleDateString()}
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td className="py-3 px-2 text-gray-500" colSpan="5">No orders</td>
+                <td className="py-3 px-2 text-gray-500" colSpan="5">
+                  No orders
+                </td>
               </tr>
             )}
           </tbody>
@@ -81,4 +95,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-

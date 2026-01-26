@@ -7,6 +7,7 @@ import {
   markNotificationRead,
   markAllRead,
   deleteAllNotifications,
+  deleteNotification,
   getDefaultNotifications,
   sendDefaultNotification,
   getStoredNotifications,
@@ -34,5 +35,7 @@ router.put("/read/:id", protect, markNotificationRead);
 router.put("/read-all", protect, markAllRead);
 
 router.delete("/delete-all", protect, deleteAllNotifications);
+
+router.delete("/delete/:id", protect, deleteNotification);
 
 export default router;

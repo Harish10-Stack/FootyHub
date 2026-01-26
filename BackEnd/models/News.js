@@ -46,5 +46,7 @@ const newsSchema = mongoose.Schema(
   }
 );
 
-const News = mongoose.model("News", newsSchema);
+// Explicitly tell Mongoose to use the "news" collection in Atlas
+const News = mongoose.models.News || mongoose.model("News", newsSchema, "news");
 export default News;
+

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import api from "../../utils/api.js";
 
 const AdminFixtures = () => {
   const [fixtures, setFixtures] = useState([]);
@@ -24,7 +25,7 @@ const AdminFixtures = () => {
   // Fetch fixtures from backend
   const fetchFixtures = async () => {
     try {
-      const { data } = await axios.get("https://footyhub-backend-cqir.onrender.com/api/fixtures");
+      const { data } = await api.get("/fixtures");
       setFixtures(data);
       setLoading(false);
     } catch (error) {
@@ -48,9 +49,7 @@ const AdminFixtures = () => {
     });
     if (!isConfirmed) return;
     try {
-      await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/fixtures/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/fixtures/${id}`);
       setFixtures(prevFixtures => prevFixtures.filter((f) => f._id !== id));
       Swal.fire("Deleted", "Fixture removed", "success");
     } catch (error) {
@@ -74,10 +73,9 @@ const AdminFixtures = () => {
   // Save edited fixture
   const saveFixture = async () => {
     try {
-      const { data } = await axios.put(
-        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${editingFixture._id}`,
-        formData,
-        { withCredentials: true }
+      const { data } = await api.put(
+        `/fixtures/${editingFixture._id}`,
+        formData
       );
 
       setFixtures(
@@ -103,7 +101,7 @@ const AdminFixtures = () => {
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("https://footyhub-backend-cqir.onrender.com/api/fixtures", addFormData, { withCredentials: true });
+      await api.post("/fixtures", addFormData);
       setAddFormData({ league: "", home: "", away: "", date: "", time: "" });
       fetchFixtures();
       alert("Fixture added successfully");

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { validatePassword } from "../../utils/passwordValidator.js";
 
-const API = "https://footyhub-backend-cqir.onrender.com";
+const API = "http://localhost:5000";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -33,14 +33,7 @@ const ResetPassword = () => {
     setMessage({ text: "", type: "" });
 
     try {
-      const res = await fetch(`${API}/api/users/reset-password/${token}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to reset password");
+      const data = await api.put(`/users/reset-password/${token}`, { password });
 
       setMessage({ text: data.message, type: "success" });
       setPassword("");
@@ -48,7 +41,7 @@ const ResetPassword = () => {
       setPasswordErrors([]);
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setMessage({ text: err.message, type: "error" });
+      setMessage({ text: err.response?.data?.message || err.message, type: "error" });
     } finally {
       setLoading(false);
     }

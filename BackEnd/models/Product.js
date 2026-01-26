@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     price: { type: Number, required: true }, // ✅ number
-    img: { type: String, required: true },
+    img: { type: String, default: '/uploads/Footballs/id1.webp' },
     category: { type: String, required: true },
     description: [{ type: String }], // ✅ array of strings
   },

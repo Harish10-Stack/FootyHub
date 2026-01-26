@@ -87,7 +87,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }) {
           {/* User Avatar and Name */}
           <div className="flex items-center gap-3 mb-3">
             <img
-              src={user?.avatar || "/uploads/avatars/default-avatar.png"}
+              src={user?.avatar ? `${import.meta.env.VITE_API_URL}${user.avatar}` : `${import.meta.env.VITE_API_URL}/uploads/avatars/default-avatar.png`}
               alt="User Avatar"
               className={`w-8 h-8 rounded-full object-cover border border-[#1b2226] ${
                 collapsed ? "mx-auto" : ""

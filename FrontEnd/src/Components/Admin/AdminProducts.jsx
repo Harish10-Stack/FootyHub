@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api.js";
 import Swal from "sweetalert2";
 import { Trash2, Plus, Edit } from "lucide-react";
 
@@ -10,7 +10,7 @@ export default function AdminProducts() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/products");
+      const res = await api.get("/products");
       setProducts(res.data || []);
     } catch (err) {
       console.error(err);
@@ -31,7 +31,7 @@ export default function AdminProducts() {
     if (!isConfirmed) return;
 
     try {
-      await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/products/${id}`, { withCredentials: true });
+      await api.delete(`/products/${id}`);
       Swal.fire("Deleted", "Product removed", "success");
       fetchProducts();
     } catch (err) {

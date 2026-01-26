@@ -8,7 +8,7 @@ export default function AdminProductList() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/products");
+      const res = await api.get("/products");
       setProducts(res.data);
     } catch (err) {
       console.error(err);
@@ -28,7 +28,7 @@ export default function AdminProductList() {
     if (!isConfirmed) return;
 
     try {
-      await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/products/${id}`, { withCredentials: true });
+      await api.delete(`/products/${id}`);
       Swal.fire("Deleted", "Product removed", "success");
       fetchProducts();
     } catch (err) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
+import api from "../../utils/api.js"; // ✅ use axios instance
 
 const ReviewPopup = ({ onClose, user, refreshReviews }) => {
   const [rating, setRating] = useState(0);
@@ -38,19 +38,10 @@ const ReviewPopup = ({ onClose, user, refreshReviews }) => {
     setSubmitting(true);
 
     try {
-      const token = localStorage.getItem("footyhubToken");
-
-      await axios.post(
-        "https://footyhub-backend-cqir.onrender.com/api/reviews",
-        {
-          rating,
-          comment: trimmedComment,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
-      );
+      await api.post("/reviews", {
+        rating,
+        comment: trimmedComment,
+      });
 
       Swal.fire({
         icon: "success",

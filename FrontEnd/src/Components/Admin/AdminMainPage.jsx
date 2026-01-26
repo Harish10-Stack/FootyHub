@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from "../../utils/api.js";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import { BarChart3, Users, Package, ShoppingCart, TrendingUp, Settings, Bell, FileText } from "lucide-react";
 
@@ -20,10 +21,10 @@ const AdminMainPage = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const statsRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/admin/stats", { withCredentials: true });
+        const statsRes = await api.get("/admin/stats");
         setStats(statsRes.data);
 
-        const ordersRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/orders/all", { withCredentials: true });
+        const ordersRes = await api.get("/admin/all");
         setRecentOrders(ordersRes.data.slice(0, 5));
       } catch (error) {
         console.error("Error fetching admin data:", error);

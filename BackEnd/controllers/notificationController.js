@@ -127,7 +127,7 @@ export const createNotification = asyncHandler(async (req, res) => {
 // User: Get notifications
 export const getUserNotifications = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  const notifications = await Notification.find({ user: userId, read: false }).sort({
+  const notifications = await Notification.find({ user: userId }).sort({
     createdAt: -1,
   }).populate('sender', 'name _id');
   res.json(notifications);
@@ -158,6 +158,18 @@ export const deleteAllNotifications = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   await Notification.deleteMany({ user: userId });
   res.json({ message: "All notifications deleted" });
+});
+
+// Delete a single notification
+export const deleteNotification = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user._id;
+  const notification = await Notification.findOneAndDelete({ _id: id, user: userId });
+  if (!notification) {
+    res.status(404);
+    throw new Error("Notification not found");
+  }
+  res.json({ message: "Notification deleted" });
 });
 
 // New: Get default notifications

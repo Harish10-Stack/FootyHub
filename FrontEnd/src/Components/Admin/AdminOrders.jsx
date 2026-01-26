@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api.js";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/orders/all", { withCredentials: true });
+      const res = await api.get("/orders/all");
       setOrders(res.data);
     } catch (err) {
       console.error(err);

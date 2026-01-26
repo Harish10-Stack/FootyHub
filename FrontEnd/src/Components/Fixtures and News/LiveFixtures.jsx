@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import api from "../../utils/api.js";
 import FixturesHeader from "../Headers/FixturesHeader.jsx";
 import Footer from "../Home/Footer.jsx";
 import { useAuth } from "../Explore/AuthContext.jsx";
@@ -30,7 +31,7 @@ const FixturesPage = () => {
 
   const fetchFixtures = async () => {
     try {
-      const { data } = await axios.get("https://footyhub-backend-cqir.onrender.com/api/fixtures");
+      const { data } = await api.get("/fixtures");
       setFixtures(data);
 
       // Fetch comments and reactions for each fixture
@@ -39,8 +40,8 @@ const FixturesPage = () => {
       await Promise.all(
         data.map(async (f) => {
           const [commentsRes, reactionsRes] = await Promise.all([
-            axios.get(`https://footyhub-backend-cqir.onrender.com/api/fixtures/${f._id}/comments`),
-            axios.get(`https://footyhub-backend-cqir.onrender.com/api/fixtures/${f._id}/reactions`)
+            api.get(`/fixtures/${f._id}/comments`),
+            api.get(`/fixtures/${f._id}/reactions`)
           ]);
           commentsData[f._id] = commentsRes.data;
           reactionsData[f._id] = reactionsRes.data;
@@ -81,11 +82,7 @@ const FixturesPage = () => {
   const handleReaction = async (fixtureId, emoji) => {
     if (!user) return alert("Login to react!");
     try {
-      await axios.post(
-        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${fixtureId}/react`,
-        { emoji },
-        { withCredentials: true }
-      );
+      await api.post(`/fixtures/${fixtureId}/react`, { emoji });
       fetchFixtures();
     } catch (err) {
       console.error("Reaction error:", err.response?.data || err);
@@ -98,11 +95,7 @@ const FixturesPage = () => {
     if (!user || !text?.trim()) return;
 
     try {
-      await axios.post(
-        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${fixtureId}/comment`,
-        { text },
-        { withCredentials: true }
-      );
+      await api.post(`/fixtures/${fixtureId}/comment`, { text });
       setCommentInput((prev) => ({ ...prev, [fixtureId]: "" }));
       setShowCommentBox((prev) => ({ ...prev, [fixtureId]: false }));
       fetchFixtures();
@@ -116,10 +109,7 @@ const FixturesPage = () => {
     if (!user) return;
 
     try {
-      await axios.delete(
-        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${fixtureId}/comment/${commentId}`,
-        { withCredentials: true }
-      );
+      await api.delete(`/fixtures/${fixtureId}/comment/${commentId}`);
       fetchFixtures();
     } catch (err) {
       console.error("Delete comment error:", err.response?.data || err);

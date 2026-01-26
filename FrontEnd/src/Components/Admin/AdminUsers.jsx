@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import api from "../../utils/api.js";
 import Swal from "sweetalert2";
 import { Trash2 } from "lucide-react";
 import { blockUser, unblockUser } from "../../services/userService";
@@ -9,7 +10,7 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/users/admin/all", { withCredentials: true });
+      const res = await api.get("/users/admin/all");
       setUsers(res.data);
     } catch (err) {
       console.error(err);
@@ -29,7 +30,7 @@ export default function AdminUsers() {
     if (!isConfirmed) return;
 
     try {
-      await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/users/admin/delete/${id}`, { withCredentials: true });
+      await api.delete(`/users/admin/delete/${id}`);
       Swal.fire("Deleted", "User removed", "success");
       fetchUsers();
     } catch (err) {

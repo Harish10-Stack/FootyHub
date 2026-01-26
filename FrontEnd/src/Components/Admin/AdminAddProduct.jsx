@@ -4,14 +4,20 @@ import Swal from "sweetalert2";
 import { Upload, Package, Tag, DollarSign, FileText } from "lucide-react";
 
 export default function AdminAddProduct() {
-  const [form, setForm] = useState({ name: "", category: "", price: "", description: "" });
+  const [form, setForm] = useState({
+    name: "",
+    category: "",
+    price: "",
+    description: "",
+  });
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleImageChange = e => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
     if (file) {
@@ -23,28 +29,37 @@ export default function AdminAddProduct() {
     }
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     const formData = new FormData();
-    formData.append('name', form.name);
-    formData.append('category', form.category);
-    formData.append('price', form.price);
-    formData.append('description', form.description);
-    if (image) formData.append('img', image);
+    formData.append("name", form.name);
+    formData.append("category", form.category);
+    formData.append("price", form.price);
+    formData.append("description", form.description);
+    if (image) formData.append("img", image);
 
     try {
-      await axios.post("https://footyhub-backend-cqir.onrender.com/api/products", formData, {
-        withCredentials: true,
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/products`,
+        formData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
+
       Swal.fire("Success", "Product added successfully", "success");
       setForm({ name: "", category: "", price: "", description: "" });
       setImage(null);
       setImagePreview(null);
     } catch (err) {
-      Swal.fire("Error", err?.response?.data?.message || "Failed to add product", "error");
+      Swal.fire(
+        "Error",
+        err?.response?.data?.message || "Failed to add product",
+        "error",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -54,7 +69,9 @@ export default function AdminAddProduct() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-white mb-2">Add New Product</h1>
-        <p className="text-gray-400">Fill in the details below to add a new product to your catalog.</p>
+        <p className="text-gray-400">
+          Fill in the details below to add a new product to your catalog.
+        </p>
       </div>
 
       <div className="bg-[#0b1114] border border-[#22282c] rounded-lg p-6 shadow-lg">

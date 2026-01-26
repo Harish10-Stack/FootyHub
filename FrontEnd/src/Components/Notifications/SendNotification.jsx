@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import api from "../../utils/api";
 
 export default function SendNotification() {
   const [users, setUsers] = useState([]);
@@ -14,8 +15,8 @@ export default function SendNotification() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const usersRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/users/admin/all", { withCredentials: true });
-        const defaultsRes = await axios.get("https://footyhub-backend-cqir.onrender.com/api/notifications/defaults", { withCredentials: true });
+        const usersRes = await api.get("/users/admin/all");
+        const defaultsRes = await api.get("/notifications/defaults");
 
         setUsers(usersRes.data);
         setDefaultNotifications(defaultsRes.data);
@@ -52,20 +53,12 @@ export default function SendNotification() {
     try {
       // If admin selected a default template instead of typing
       if (selectedDefault !== "") {
-        await axios.post(
-          `https://footyhub-backend-cqir.onrender.com/api/notifications/send/${selectedDefault}`,
-          { userIds: selectedUser ? [selectedUser] : [] },
-          { withCredentials: true }
-        );
+        await api.post(`/notifications/send/${selectedDefault}`, { userIds: selectedUser ? [selectedUser] : [] });
 
         Swal.fire("Success", "Default Notification Sent", "success");
       } else {
         // Send custom message
-        await axios.post(
-          "https://footyhub-backend-cqir.onrender.com/api/notifications",
-          { title, message, userId: selectedUser || null },
-          { withCredentials: true }
-        );
+        await api.post("/notifications", { title, message, userId: selectedUser || null });
 
         Swal.fire("Success", "Notification Sent", "success");
       }

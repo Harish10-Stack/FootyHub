@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import { validatePassword } from "../../utils/passwordValidator.js";
+import api from "../../utils/api.js";
 
-const API = "https://footyhub-backend-cqir.onrender.com";
+const API = import.meta.env.VITE_API_BASE_URL + "/api";
 
 const Profile = () => {
   const { user, updateUser, logout } = useAuth();
@@ -34,36 +35,35 @@ const Profile = () => {
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarChanged, setAvatarChanged] = useState(false);
   const [removeAvatar, setRemoveAvatar] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
 
-  // Load profile from backend
+  // Load profile from backend (removed redundant call on mount)
   const fetchProfile = async () => {
     try {
-      const res = await fetch(`${API}/api/users/profile`, {
-        credentials: "include",
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to load profile");
+      const data = await api.get("/users/profile");
 
       const u = data.user || data;
 
       setName(u.name);
       setEmail(u.email);
-      setAvatarPreview(u.avatar || "/default-avatar.png");
+      setAvatarPreview(u.avatar || "/uploads/avatars/default-avatar.png");
 
       updateUser(u);
     } catch (err) {
-      if (err.message.includes("Not authorized")) {
-        logout();
-        navigate("/");
-      }
-      setMessage({ text: err.message, type: "error" });
+      // Don't logout on 401 to keep user data displayed
+      setMessage({ text: err.response?.data?.message || "Failed to refresh profile data", type: "error" });
     }
   };
 
+  // Update local states when user data changes
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+      setAvatarPreview(user.avatar || "/uploads/avatars/default-avatar.png");
+    }
+  }, [user]);
 
   const handleAvatarSelect = (e) => {
     const f = e.target.files?.[0];
@@ -81,17 +81,17 @@ const Profile = () => {
     setMessage({ text: "", type: "" });
 
     if (field === "name") {
-      if (!name.trim())
+      if (!name || !name.trim())
         return setMessage({ text: "Name cannot be empty", type: "error" });
-      if (name.trim() === user?.name)
+      if (name && name.trim() === user?.name)
         return setMessage({ text: "No changes detected", type: "info" });
       setStagedName(name.trim());
     }
 
     if (field === "email") {
-      if (!email.trim())
+      if (!email || !email.trim())
         return setMessage({ text: "Email cannot be empty", type: "error" });
-      if (email.trim() === user?.email)
+      if (email && email.trim() === user?.email)
         return setMessage({ text: "No changes detected", type: "info" });
       setStagedEmail(email.trim());
     }
@@ -112,7 +112,7 @@ const Profile = () => {
     setMessage({ text: "", type: "" });
 
     try {
-      let res;
+      let data;
 
       if (avatarFile) {
         const fd = new FormData();
@@ -121,30 +121,24 @@ const Profile = () => {
         fd.append("currentPassword", confirmPassword);
         fd.append("avatar", avatarFile);
 
-        res = await fetch(`${API}/api/users/profile`, {
-          method: "PUT",
-          credentials: "include",
-          body: fd,
-        });
+        data = await api.put("/users/profile", fd);
       } else {
         const body = { currentPassword: confirmPassword };
         if (stagedName) body.name = stagedName;
         if (stagedEmail) body.email = stagedEmail;
         if (removeAvatar) body.removeAvatar = true;
 
-        res = await fetch(`${API}/api/users/profile`, {
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
+        data = await api.put("/users/profile", body);
       }
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-
-      updateUser(data.user || data);
+      const updatedUser = data.user || data;
+      updateUser(updatedUser);
       setMessage({ text: "Profile updated!", type: "success" });
+
+      // Update local states immediately to reflect changes
+      setName(updatedUser.name);
+      setEmail(updatedUser.email);
+      setAvatarPreview(updatedUser.avatar || "/uploads/avatars/default-avatar.png");
 
       setStagedName(null);
       setStagedEmail(null);
@@ -155,7 +149,7 @@ const Profile = () => {
 
       fetchProfile();
     } catch (err) {
-      setMessage({ text: err.message, type: "error" });
+      setMessage({ text: err.response?.data?.message || err.message, type: "error" });
     } finally {
       setLoading(false);
     }
@@ -180,15 +174,7 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API}/api/users/update-password`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currentPassword, newPassword }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      await api.put("/users/update-password", { currentPassword, newPassword });
 
       setMessage({ text: "Password updated!", type: "success" });
       setPasswordOpen(false);
@@ -197,38 +183,42 @@ const Profile = () => {
       setNewPasswordConfirm("");
       setPasswordErrors([]);
     } catch (err) {
-      setMessage({ text: err.message, type: "error" });
+      setMessage({ text: err.response?.data?.message || err.message, type: "error" });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white pb-20">
       {/* Header */}
-      <header className="border-b border-white/10 backdrop-blur-md bg-black/40 sticky top-0 z-30 shadow-lg">
-        <div className="max-w-7xl mx-auto px-8 py-6 flex items-center justify-between relative">
+      <header className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700/50 backdrop-blur-lg sticky top-0 z-30 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-8 py-10 flex items-center justify-between relative">
           <button
             onClick={() => navigate("/")}
-            className="absolute left-8 top-1/2 -translate-y-1/2 text-green-400 hover:text-emerald-300 font-semibold text-lg transition cursor-pointer"
+            className="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 font-semibold text-lg transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-lg rounded-lg px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50"
           >
-            ← Back to Home
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Home
           </button>
-          <div className="w-full flex justify-center">
-            <h1 className="text-green-400 font-extrabold text-3xl tracking-widest drop-shadow-lg text-center">
-              ⚽ Every Minute Counts
+          <div className="flex-1 flex justify-center">
+            <h1 className="text-emerald-400 font-extrabold text-5xl tracking-wider drop-shadow-lg text-center bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+              ⚽ FootyHub Profile
             </h1>
           </div>
+          <div className="w-40"></div>
         </div>
       </header>
 
       {/* Main */}
-      <main className="max-w-4xl mx-auto px-6 mt-14">
+      <main className="max-w-5xl mx-auto px-8 mt-16">
         <motion.section
-          initial={{ opacity: 0, y: 25 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="bg-gradient-to-br from-gray-900/90 to-gray-950/90 backdrop-blur-xl border border-gray-800 p-10 rounded-3xl shadow-2xl space-y-10"
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="bg-gradient-to-br from-slate-900/95 to-slate-950/95 backdrop-blur-xl border border-slate-700/50 p-12 rounded-3xl shadow-2xl space-y-12"
         >
           {/* Avatar + Basic */}
           <div className="flex flex-col sm:flex-row items-center sm:items-end gap-8">
@@ -268,8 +258,8 @@ const Profile = () => {
             </div>
 
             <div className="text-center sm:text-left">
-              <h1 className="text-4xl font-bold text-white">{name || "—"}</h1>
-              <p className="text-gray-400 text-lg mt-1">{email || "—"}</p>
+              <h1 className="text-4xl font-bold text-white">{name?.trim() ? name : "—"}</h1>
+              <p className="text-gray-400 text-lg mt-1">{email?.trim() ? email : "—"}</p>
             </div>
           </div>
 
@@ -284,10 +274,10 @@ const Profile = () => {
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="flex-1 bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-green-400"
+                    className="flex-1 bg-black border-b border-gray-700 p-2 text-white focus:outline-none focus:border-green-400"
                   />
                 ) : (
-                  <div className="flex-1 text-white text-lg">{name}</div>
+                  <div className="flex-1 text-white text-lg">{name?.trim() ? name : "—"}</div>
                 )}
                 <button
                   onClick={() =>
@@ -311,10 +301,10 @@ const Profile = () => {
                   <input
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="flex-1 bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-green-400"
+                    className="flex-1 bg-black border-b border-gray-700 p-2 text-white focus:outline-none focus:border-green-400"
                   />
                 ) : (
-                  <div className="flex-1 text-white text-lg">{email}</div>
+                  <div className="flex-1 text-white text-lg">{email?.trim() ? email : "—"}</div>
                 )}
                 <button
                   onClick={() =>

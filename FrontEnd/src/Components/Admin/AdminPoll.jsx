@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api.js";
 
 export default function AdminPoll() {
   const [poll, setPoll] = useState({ totalMessi: 0, totalRonaldo: 0, voters: [] });
 
   const fetchPoll = async () => {
     try {
-      const res = await axios.get("https://footyhub-backend-cqir.onrender.com/api/poll");
+      const res = await api.get("/poll");
       setPoll(res.data);
     } catch (err) {
       console.error(err);

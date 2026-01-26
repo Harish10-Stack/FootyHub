@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import api from "../../utils/api.js";
 import Swal from "sweetalert2";
 import NewsHeader from "../Headers/NewsHeader.jsx";
 import Footer from "../Home/Footer.jsx";
@@ -31,7 +32,7 @@ const NewsFeed = () => {
 
   const fetchNews = async () => {
     try {
-      const { data } = await axios.get("https://footyhub-backend-cqir.onrender.com/api/news");
+      const { data } = await api.get("/news");
       setNewsData(data);
 
       // Fetch comments and reactions for each news item
@@ -40,8 +41,8 @@ const NewsFeed = () => {
       await Promise.all(
         data.map(async (n) => {
           const [commentsRes, reactionsRes] = await Promise.all([
-            axios.get(`https://footyhub-backend-cqir.onrender.com/api/news/${n._id}/comments`),
-            axios.get(`https://footyhub-backend-cqir.onrender.com/api/news/${n._id}/reactions`)
+            api.get(`/news/${n._id}/comments`),
+            api.get(`/news/${n._id}/reactions`)
           ]);
           commentsData[n._id] = commentsRes.data;
           reactionsData[n._id] = reactionsRes.data;
@@ -58,12 +59,8 @@ const NewsFeed = () => {
   const handleReaction = async (newsId, emoji) => {
     if (!user) return alert("Login to react!");
     try {
-      await axios.post(
-        `https://footyhub-backend-cqir.onrender.com/api/news/${newsId}/react`,
-        { emoji },
-        { withCredentials: true }
-      );
-      fetchNews();
+      await api.post(`/news/${newsId}/react`, { emoji });
+      fetchNews();  
     } catch (err) {
       console.error("Reaction error:", err.response?.data || err);
     }
@@ -75,11 +72,7 @@ const NewsFeed = () => {
     if (!user || !text?.trim()) return;
 
     try {
-      await axios.post(
-        `https://footyhub-backend-cqir.onrender.com/api/news/${newsId}/comment`,
-        { text },
-        { withCredentials: true }
-      );
+      await api.post(`/news/${newsId}/comment`, { text });
       setCommentInput((prev) => ({ ...prev, [newsId]: "" }));
       setShowCommentBox((prev) => ({ ...prev, [newsId]: false }));
       fetchNews();
@@ -102,11 +95,7 @@ const NewsFeed = () => {
 
     if (result.isConfirmed) {
       try {
-        const token = localStorage.getItem("footyhubToken");
-        await axios.delete(`https://footyhub-backend-cqir.onrender.com/api/news/${newsId}/comment/${commentId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
+        await api.delete(`/news/${newsId}/comment/${commentId}`);
 
         Swal.fire({
           icon: "success",

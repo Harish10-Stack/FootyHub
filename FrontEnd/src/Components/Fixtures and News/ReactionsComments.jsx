@@ -16,7 +16,7 @@ const ReactionsComments = ({ fixtureId }) => {
   const fetchData = async () => {
     try {
       const { data: commentsData } = await axios.get(
-        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${fixtureId}/comments`,
+        `/fixtures/${fixtureId}/comments`,
         {
           headers: user
             ? { Authorization: `Bearer ${localStorage.getItem("footyhubToken")}` }
@@ -25,9 +25,7 @@ const ReactionsComments = ({ fixtureId }) => {
       );
 
       // Compute emoji counts
-      const { data: fixtureData } = await axios.get(
-        `https://footyhub-backend-cqir.onrender.com/api/fixtures`
-      );
+      const { data: fixtureData } = await api.get("/fixtures");
       const fixture = fixtureData.find((f) => f._id === fixtureId);
       const emojiCounts = {};
       emojiList.forEach((e) => {
@@ -48,13 +46,7 @@ const ReactionsComments = ({ fixtureId }) => {
   const handleReaction = async (emoji) => {
     if (!user) return alert("Please login to react!");
     try {
-      await axios.post(
-        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${fixtureId}/react`,
-        { emoji },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("footyhubToken")}` },
-        }
-      );
+      await api.post(`/fixtures/${fixtureId}/react`, { emoji });
       fetchData();
     } catch (err) {
       console.error(err);
@@ -65,7 +57,7 @@ const ReactionsComments = ({ fixtureId }) => {
     if (!commentText.trim() || !user) return;
     try {
       await axios.post(
-        `https://footyhub-backend-cqir.onrender.com/api/fixtures/${fixtureId}/comment`,
+        `/fixtures/${fixtureId}/comment`,
         { text: commentText },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("footyhubToken")}` },

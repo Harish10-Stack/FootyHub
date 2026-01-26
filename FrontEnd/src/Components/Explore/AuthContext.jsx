@@ -1,96 +1,78 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import socket from "../utils/socket"; // ✅ using global socket
-import axios from "axios";
+import socket from "../../utils/socket.js";
+import api from "../../utils/api.js";
 
 const AuthContext = createContext();
-const API = "https://footyhub-backend-cqir.onrender.com";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [notifications, setNotifications] = useState([]); // 🔥 Add notifications state
+  const [notifications, setNotifications] = useState([]);
 
   // -----------------------------------------
-  // Load user from session storage
+  // Load user from backend
   // -----------------------------------------
   const loadUser = async () => {
+    const token = localStorage.getItem("footyhubToken"); // ✅ declare token
+
+    if (!token) {
+      setUser(null);
+      return;
+    }
+
     try {
-      const res = await fetch(`${API}/api/users/profile`, {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        setUser(null);
-        return;
-      }
-
-      const data = await res.json();
+      const { data } = await api.get("/users/profile");
       setUser(data);
-    } catch {
+    } catch (err) {
+      localStorage.removeItem("footyhubToken");
       setUser(null);
     }
   };
 
   useEffect(() => {
-    loadUser();
-    setLoading(false);
+    const init = async () => {
+      await loadUser();
+      setLoading(false);
+    };
+    init();
   }, []);
 
-  // Fetch notifications when user is loaded
-  useEffect(() => {
-    if (user) {
-      fetchNotifications();
-    }
-  }, [user]);
-
   // -----------------------------------------
-// Login
-  // -----------------------------------------
-  const login = async (email, password) => {
-    const res = await fetch(`${API}/api/users/login`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
-
-    await loadUser();
-
-    // Trigger welcome notification after login and user is loaded
-    try {
-      await fetch(`${API}/api/notifications/welcome`, {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch (err) {
-      console.error("Welcome notification failed:", err);
-    }
-  };
-
-  // -----------------------------------------
-// Fetch notifications
+  // Fetch notifications
   // -----------------------------------------
   const fetchNotifications = async () => {
     if (!user) return;
     try {
-      const res = await fetch(`${API}/api/notifications/my`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (res.ok) {
-        const notifs = await res.json();
-        let filteredNotifs = notifs;
-        if (user?.isAdmin) {
-          filteredNotifs = notifs.filter(n => n.type === "admin-talk");
-        }
-        setNotifications(filteredNotifs);
-      }
+      const { data: notifs } = await api.get("/notifications/my");
+      const filteredNotifs = user?.isAdmin
+        ? notifs.filter((n) => n.type === "admin-talk")
+        : notifs;
+      setNotifications(filteredNotifs);
     } catch (err) {
       console.error("Failed to fetch notifications:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (user) fetchNotifications();
+  }, [user]);
+
+  // -----------------------------------------
+  // Login
+  // -----------------------------------------
+  const login = async (email, password) => {
+    try {
+      const { data } = await api.post("/users/login", { email, password }); // ✅ added `data`
+      
+      // 🔥 SAVE TOKEN
+      if (data?.token) {
+        localStorage.setItem("footyhubToken", data.token);
+      }
+
+      await loadUser();
+    } catch (err) {
+      console.error("Login error:", err.response?.data);
+      throw new Error(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -98,19 +80,24 @@ export const AuthProvider = ({ children }) => {
   // Register
   // -----------------------------------------
   const register = async (name, email, password) => {
-    const res = await fetch(`${API}/api/users/register`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
+    try {
+      const { data } = await api.post("/users/register", { name, email, password });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
+      // 🔥 SAVE TOKEN
+      if (data?.token) {
+        localStorage.setItem("footyhubToken", data.token);
+      }
 
-    await loadUser();
+      await loadUser();
+    } catch (err) {
+      console.error("Register error:", err.response?.data);
+      throw new Error(err.response?.data?.message || "Registration failed");
+    }
   };
 
+  // -----------------------------------------
+  // Update user state
+  // -----------------------------------------
   const updateUser = (updatedUser) => {
     setUser(updatedUser);
   };
@@ -120,16 +107,7 @@ export const AuthProvider = ({ children }) => {
   // -----------------------------------------
   const saveDeliveryAddress = async (addressObj) => {
     try {
-      const res = await fetch(`${API}/api/users/delivery-address`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(addressObj),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to save address");
-
+      const { data } = await api.put("/users/delivery-address", addressObj);
       await loadUser();
       return data.deliveryAddress || null;
     } catch (err) {
@@ -139,29 +117,27 @@ export const AuthProvider = ({ children }) => {
   };
 
   // -----------------------------------------
-  // Logout — disconnects socket
+  // Logout
   // -----------------------------------------
-  const logout = () => {
+  const logout = async () => {
     try {
-      fetch(`${API}/api/users/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      socket.registered = false;
-      socket.disconnect();
-      setUser(null);
-      setNotifications([]);
-
-      console.log("🚪 User logged out & socket disconnected");
+      await api.post("/users/logout");
     } catch (err) {
       console.error("Logout failed:", err);
+    } finally {
+      localStorage.removeItem("footyhubToken");
+
+      socket.off(); // 🔥 clear all listeners
+      socket.disconnect();
+
+      setUser(null);
+      setNotifications([]);
     }
   };
 
-  // -----------------------------------------------------
-  // 🔥 SOCKET LISTENER: push new notifications to state
-  // -----------------------------------------------------
+  // -----------------------------------------
+  // Socket notifications
+  // -----------------------------------------
   useEffect(() => {
     if (!socket._notificationListener) {
       socket._notificationListener = true;
@@ -172,30 +148,17 @@ export const AuthProvider = ({ children }) => {
       });
     }
 
-    // Register user when socket connects or when user changes
     const registerUser = () => {
       if (user?._id && socket.connected) {
         socket.emit("register-user", user._id);
         console.log("👤 User registered for notifications:", user._id);
-      } else if (user?._id && !socket.connected) {
-        console.log("⏳ Socket not connected yet, will register when connected");
       }
     };
 
-    // Register immediately if already connected
     registerUser();
 
-    // Also register when socket connects
-    socket.on("connect", () => {
-      console.log("🔗 Socket connected, registering user");
-      registerUser();
-    });
-
-    // Handle reconnection
-    socket.on("reconnect", () => {
-      console.log("🔄 Socket reconnected, re-registering user");
-      registerUser();
-    });
+    socket.on("connect", registerUser);
+    socket.on("reconnect", registerUser);
 
     return () => {
       socket.off("connect");
@@ -204,7 +167,9 @@ export const AuthProvider = ({ children }) => {
     };
   }, [user]);
 
-  // 🔥 Functions to manage notifications
+  // -----------------------------------------
+  // Notification management
+  // -----------------------------------------
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((n) => n._id !== id));
   };
@@ -221,7 +186,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateUser,
         saveDeliveryAddress,
-        notifications, // 🔥 Expose notifications
+        notifications,
         removeNotification,
         clearNotifications,
       }}
@@ -233,8 +198,4 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => useContext(AuthContext);
 export default AuthContext;
-
-
-
-
 

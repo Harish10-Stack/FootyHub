@@ -1,38 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "../Explore/AuthContext.jsx";
+import api from "../../utils/api.js"; // ✅ use axios instance
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const { user } = useAuth(); // no token required (cookies used)
+  const { user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
 
-  // Fetch cart from backend when user logs in or user changes
+  // Fetch cart
   useEffect(() => {
     const fetchCart = async () => {
       if (!user) {
-        setCartItems([]); // clear cart when logged out
+        setCartItems([]);
         return;
       }
 
       try {
-        const res = await fetch("https://footyhub-backend-cqir.onrender.com/api/cart", {
-          method: "GET",
-          credentials: "include", // send cookies
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!res.ok) {
-          setCartItems([]);
-          return;
-        }
-
-        const data = await res.json();
+        const { data } = await api.get("/cart"); // ✅ replaced fetch with axios
         setCartItems(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Failed to fetch cart:", err);
+        console.error("Failed to fetch cart:", err.response?.data?.message || err.message);
         setCartItems([]);
       }
     };
@@ -45,23 +33,11 @@ export const CartProvider = ({ children }) => {
     if (!user) throw new Error("Not authenticated");
 
     try {
-      const res = await fetch("https://footyhub-backend-cqir.onrender.com/api/cart/add", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity, size }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to add to cart");
-      }
-
-      const data = await res.json();
+      const { data } = await api.post("/cart/add", { productId, quantity, size }); // ✅ axios
       setCartItems(Array.isArray(data) ? data : []);
       return data;
     } catch (err) {
-      console.error("Failed to add to cart:", err);
+      console.error("Failed to add to cart:", err.response?.data?.message || err.message);
       throw err;
     }
   };
@@ -71,23 +47,11 @@ export const CartProvider = ({ children }) => {
     if (!user) throw new Error("Not authenticated");
 
     try {
-      const res = await fetch(`https://footyhub-backend-cqir.onrender.com/api/cart/update/${productId}`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quantity, size }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to update cart");
-      }
-
-      const data = await res.json();
+      const { data } = await api.put(`/cart/update/${productId}`, { quantity, size }); // ✅ axios
       setCartItems(Array.isArray(data) ? data : []);
       return data;
     } catch (err) {
-      console.error("Failed to update cart:", err);
+      console.error("Failed to update cart:", err.response?.data?.message || err.message);
       throw err;
     }
   };
@@ -97,23 +61,11 @@ export const CartProvider = ({ children }) => {
     if (!user) throw new Error("Not authenticated");
 
     try {
-      const res = await fetch(`https://footyhub-backend-cqir.onrender.com/api/cart/remove/${productId}`, {
-        method: "DELETE",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ size }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to remove item");
-      }
-
-      const data = await res.json();
+      const { data } = await api.delete(`/cart/remove/${productId}`, { data: { size } }); // ✅ axios with body
       setCartItems(Array.isArray(data) ? data : []);
       return data;
     } catch (err) {
-      console.error("Failed to remove item:", err);
+      console.error("Failed to remove item:", err.response?.data?.message || err.message);
       throw err;
     }
   };
@@ -123,22 +75,11 @@ export const CartProvider = ({ children }) => {
     if (!user) throw new Error("Not authenticated");
 
     try {
-      const res = await fetch(`https://footyhub-backend-cqir.onrender.com/api/cart/clear`, {
-        method: "DELETE",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to clear cart");
-      }
-
-      const data = await res.json();
+      const { data } = await api.delete("/cart/clear"); // ✅ axios
       setCartItems(Array.isArray(data) ? data : []);
       return data;
     } catch (err) {
-      console.error("Failed to clear cart:", err);
+      console.error("Failed to clear cart:", err.response?.data?.message || err.message);
       throw err;
     }
   };

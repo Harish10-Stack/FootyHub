@@ -13,8 +13,8 @@ export const NotificationProvider = ({ children }) => {
     if (user) {
       socket.emit("register-user", user._id);
 
-      fetch(`https://footyhub-backend-cqir.onrender.com/api/notifications/${user._id}`)
-        .then(res => res.json())
+      api.get(`/notifications/${user._id}`)
+        .then(res => res.data)
         .then(data => setNotifications(data));
 
       socket.on("notification", (data) => {
@@ -31,7 +31,7 @@ export const NotificationProvider = ({ children }) => {
   }, [user]);
 
   const markAllRead = async () => {
-    await fetch(`https://footyhub-backend-cqir.onrender.com/api/notifications/read/${user._id}`, { method: "PUT" });
+    await api.put(`/notifications/read/${user._id}`);
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
