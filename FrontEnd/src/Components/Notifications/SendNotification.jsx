@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import api from "../../utils/api";
 
@@ -11,23 +10,25 @@ export default function SendNotification() {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
 
-  // Fetch all users + default notifications
+  // Fetch all users + default notifications from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const usersRes = await api.get("/users/admin/all");
-        const defaultsRes = await api.get("/notifications/defaults");
+        const [usersRes, defaultsRes] = await Promise.all([
+          api.get("/users/admin/all"),
+          api.get("/notifications/defaults"),
+        ]);
 
         setUsers(usersRes.data);
         setDefaultNotifications(defaultsRes.data);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching users or default notifications:", err);
       }
     };
     fetchData();
   }, []);
 
-  // Autofill inputs when admin selects a saved default
+  // Autofill inputs when a default template is selected
   const handleDefaultSelect = (value) => {
     if (value === "") {
       setSelectedDefault("");
@@ -42,7 +43,6 @@ export default function SendNotification() {
     setMessage(defaultNotifications[index].message);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -51,25 +51,36 @@ export default function SendNotification() {
     }
 
     try {
-      // If admin selected a default template instead of typing
       if (selectedDefault !== "") {
-        await api.post(`/notifications/send/${selectedDefault}`, { userIds: selectedUser ? [selectedUser] : [] });
+        // Send default template
+        await api.post(`/notifications/send/${selectedDefault}`, {
+          userIds: selectedUser ? [selectedUser] : [],
+        });
 
         Swal.fire("Success", "Default Notification Sent", "success");
       } else {
-        // Send custom message
-        await api.post("/notifications", { title, message, userId: selectedUser || null });
+        // Send custom notification
+        await api.post("/notifications", {
+          title,
+          message,
+          userId: selectedUser || null,
+        });
 
         Swal.fire("Success", "Notification Sent", "success");
       }
 
+      // Reset form
       setTitle("");
       setMessage("");
       setSelectedUser("");
       setSelectedDefault("");
     } catch (err) {
-      console.error(err);
-      Swal.fire("Error", err?.response?.data?.message || "Failed to send notification", "error");
+      console.error("Error sending notification:", err);
+      Swal.fire(
+        "Error",
+        err?.response?.data?.message || "Failed to send notification",
+        "error"
+      );
     }
   };
 
@@ -78,10 +89,11 @@ export default function SendNotification() {
       <h1 className="text-xl font-semibold mb-4">Send Notification</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
-        {/* Default Notification Dropdown */}
+        {/* Default Template */}
         <div>
-          <label className="block text-sm text-gray-400 mb-1">Select Default Template (Optional)</label>
+          <label className="block text-sm text-gray-400 mb-1">
+            Select Default Template (Optional)
+          </label>
           <select
             className="w-full p-2 rounded border border-gray-700 bg-[#0f1720] text-gray-200"
             value={selectedDefault}
@@ -106,7 +118,9 @@ export default function SendNotification() {
           >
             <option value="">All Users</option>
             {users.map((u) => (
-              <option key={u._id} value={u._id}>{u.name} ({u.email})</option>
+              <option key={u._id} value={u._id}>
+                {u.name} ({u.email})
+              </option>
             ))}
           </select>
         </div>
@@ -122,7 +136,6 @@ export default function SendNotification() {
             className="w-full p-2 rounded border border-gray-700 bg-[#0f1720] text-gray-200 disabled:opacity-60"
             required
           />
-
         </div>
 
         {/* Message */}
@@ -135,9 +148,9 @@ export default function SendNotification() {
             className="w-full p-2 rounded border border-gray-700 bg-[#0f1720] text-gray-200 disabled:opacity-60"
             required
           />
-
         </div>
 
+        {/* Submit */}
         <button
           type="submit"
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
@@ -148,6 +161,8 @@ export default function SendNotification() {
     </div>
   );
 }
+
+
 
 
 
