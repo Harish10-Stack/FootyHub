@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../Explore/AuthContext.jsx";
 import { validatePassword } from "../../utils/passwordValidator.js";
 
@@ -13,6 +13,29 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
   const [passwordErrors, setPasswordErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+
+  // Close modal on ESC key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape" && isOpen) onClose();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isOpen, onClose]);
+
+  const resetFields = () => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setName("");
+    setPasswordErrors([]);
+    setMessage({ text: "", type: "" });
+  };
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    resetFields();
+  };
 
   const handlePasswordChange = (e) => {
     const newPasswordValue = e.target.value;
@@ -54,6 +77,8 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
           err.response?.data?.message || err.message || "Something went wrong",
         type: "error",
       });
+      setPassword("");
+      setConfirmPassword("");
     } finally {
       setLoading(false);
     }
@@ -62,8 +87,20 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-5 sm:p-8 rounded-3xl shadow-2xl w-full max-w-md">
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50 transition-opacity duration-300"
+      role="dialog"
+      aria-modal="true"
+      onClick={onClose} // click on backdrop closes modal
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+      {/* Modal Content */}
+      <div
+        className="relative z-50 bg-white/10 backdrop-blur-xl border border-white/20 p-5 sm:p-8 rounded-3xl shadow-2xl w-full max-w-md transition-transform duration-300 transform scale-100"
+        onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+      >
         <h2 className="text-2xl font-bold text-green-400 mb-6 text-center">
           {isLogin ? "Login" : "Register"}
         </h2>
@@ -137,6 +174,8 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
           <button
             type="submit"
             disabled={loading}
+            aria-busy={loading}
+            aria-disabled={loading}
             className="w-full bg-green-600 hover:bg-green-700 text-black font-semibold py-2 rounded-lg transition disabled:opacity-60"
           >
             {loading
@@ -144,14 +183,14 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
                 ? "Logging in..."
                 : "Registering..."
               : isLogin
-                ? "Login"
-                : "Register"}
+              ? "Login"
+              : "Register"}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={toggleMode}
             className="text-green-400 hover:text-emerald-300 transition"
           >
             {isLogin
