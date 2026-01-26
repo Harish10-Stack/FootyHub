@@ -7,10 +7,10 @@ const AdminRoute = ({ children }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && !modalOpen) {
       setModalOpen(true);
     }
-  }, [loading, user]);
+  }, [loading, user, modalOpen]);
 
   if (loading) {
     return <div className="text-white text-center mt-20">Loading...</div>;
@@ -41,5 +41,8 @@ const AdminRoute = ({ children }) => {
 };
 
 export default AdminRoute;
+
+
+
 
 
