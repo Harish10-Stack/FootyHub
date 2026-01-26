@@ -29,7 +29,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }) {
   const { user } = useAuth();
 
   // Determine active tab from URL
-  const activeTab = location.pathname.split("/")[2] || "dashboard";
+  const activeTab = TABS.find(t => location.pathname.startsWith(`/admin/${t.key}`))?.key || "dashboard";
 
   return (
     <aside
