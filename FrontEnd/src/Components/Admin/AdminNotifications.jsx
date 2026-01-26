@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "../Notifications/axiosInstance";
+import api from "../../utils/api.js"; // Changed from axiosInstance
 import Swal from "sweetalert2";
 import { Send, Bell, PlusCircle } from "lucide-react";
 
@@ -30,7 +30,7 @@ const AdminNotifications = () => {
   const fetchDefaultNotifications = async () => {
     setLoadingDefaults(true);
     try {
-      const { data } = await axios.get("/api/notifications/defaults");
+      const { data } = await api.get("/notifications/defaults");
       setDefaultNotifications(data);
     } catch (error) {
       console.error("Error fetching default notifications:", error);
@@ -43,7 +43,7 @@ const AdminNotifications = () => {
   const fetchStoredNotifications = async () => {
     setLoadingStored(true);
     try {
-      const { data } = await axios.get("/api/notifications/stored");
+      const { data } = await api.get("/notifications/stored");
       setStoredNotifications(data);
     } catch (error) {
       console.error("Error fetching stored notifications:", error);
@@ -56,7 +56,7 @@ const AdminNotifications = () => {
   const fetchUsers = async () => {
     setLoadingUsers(true);
     try {
-      const { data } = await axios.get("/api/users");
+      const { data } = await api.get("/users");
       setUsers(data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -70,9 +70,7 @@ const AdminNotifications = () => {
     const options = e.target.options;
     const selected = [];
     for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        selected.push(options[i].value);
-      }
+      if (options[i].selected) selected.push(options[i].value);
     }
     setSelectedUserIds(selected);
   };
@@ -80,8 +78,8 @@ const AdminNotifications = () => {
   const sendDefaultNotification = async (index) => {
     setSending(`default-${index}`);
     try {
-      const { data } = await axios.post(
-        `/api/notifications/send/${index}`,
+      const { data } = await api.post(
+        `/notifications/send/${index}`,
         selectedUserIds.length > 0 ? { userIds: selectedUserIds } : {}
       );
       Swal.fire("Success", data.message, "success");
@@ -97,8 +95,8 @@ const AdminNotifications = () => {
   const sendStoredNotification = async (id) => {
     setSending(`stored-${id}`);
     try {
-      const { data } = await axios.post(
-        `/api/notifications/send/stored/${id}`,
+      const { data } = await api.post(
+        `/notifications/send/stored/${id}`,
         selectedUserIds.length > 0 ? { userIds: selectedUserIds } : {}
       );
       Swal.fire("Success", data.message, "success");
@@ -113,7 +111,6 @@ const AdminNotifications = () => {
 
   const createStoredNotification = async () => {
     const { title, message, category } = newNotification;
-
     if (!title || !message) {
       Swal.fire("Error", "Title and message are required", "error");
       return;
@@ -121,11 +118,7 @@ const AdminNotifications = () => {
 
     setCreating(true);
     try {
-      const { data } = await axios.post("/api/notifications", {
-        title,
-        message,
-        category,
-      });
+      const { data } = await api.post("/notifications", { title, message, category });
       Swal.fire("Success", "Notification created", "success");
       setNewNotification({ title: "", message: "", category: "" });
       fetchStoredNotifications();
@@ -196,6 +189,7 @@ const AdminNotifications = () => {
   return (
     <div className="p-6 bg-[#0b1114] min-h-screen">
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <Bell className="h-8 w-8 text-blue-400" />
           <h1 className="text-3xl font-bold text-white">Admin Notifications</h1>
@@ -222,12 +216,11 @@ const AdminNotifications = () => {
           <p className="text-gray-400 mt-1 text-sm">If no users selected, notification will be sent to all users.</p>
         </div>
 
+        {/* Tabs */}
         <div className="mb-6 flex gap-4">
           <button
             className={`px-4 py-2 rounded ${
-              activeTab === "default"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-700 text-gray-300"
+              activeTab === "default" ? "bg-blue-600 text-white" : "bg-gray-700 text-gray-300"
             }`}
             onClick={() => setActiveTab("default")}
           >
@@ -235,9 +228,7 @@ const AdminNotifications = () => {
           </button>
           <button
             className={`px-4 py-2 rounded ${
-              activeTab === "stored"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-700 text-gray-300"
+              activeTab === "stored" ? "bg-blue-600 text-white" : "bg-gray-700 text-gray-300"
             }`}
             onClick={() => setActiveTab("stored")}
           >
@@ -245,6 +236,7 @@ const AdminNotifications = () => {
           </button>
         </div>
 
+        {/* Default Notifications */}
         {activeTab === "default" && (
           <>
             <div className="mb-6">
@@ -252,7 +244,6 @@ const AdminNotifications = () => {
                 Send pre-written notifications to all users instantly. Each notification includes proper category styling and icons.
               </p>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {defaultNotifications.length === 0 && (
                 <div className="text-center py-12 col-span-full">
@@ -277,13 +268,9 @@ const AdminNotifications = () => {
                       </span>
                     </div>
 
-                    <h3 className="text-xl font-semibold text-white mb-3">
-                      {notification.title}
-                    </h3>
+                    <h3 className="text-xl font-semibold text-white mb-3">{notification.title}</h3>
 
-                    <p className="text-gray-300 mb-6 leading-relaxed">
-                      {notification.message}
-                    </p>
+                    <p className="text-gray-300 mb-6 leading-relaxed">{notification.message}</p>
 
                     <button
                       onClick={() => sendDefaultNotification(index)}
@@ -309,6 +296,7 @@ const AdminNotifications = () => {
           </>
         )}
 
+        {/* Stored Notifications */}
         {activeTab === "stored" && (
           <>
             <div className="mb-6">
@@ -317,56 +305,57 @@ const AdminNotifications = () => {
               </p>
             </div>
 
-      <div className="mb-6 max-w-md">
-        <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
-          <PlusCircle />
-          Create New Notification
-        </h2>
-        <label htmlFor="title-select" className="block text-gray-300 mb-1">Select Title</label>
-        <select
-          id="title-select"
-          className="w-full mb-3 p-2 rounded bg-gray-800 text-white"
-          value={newNotification.title}
-          onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value })}
-          disabled={creating}
-        >
-          <option value="">--Select a Title--</option>
-          {defaultNotifications.map((notif, i) => (
-            <option key={i} value={notif.title}>{notif.title}</option>
-          ))}
-        </select>
+            {/* Create New Notification */}
+            <div className="mb-6 max-w-md">
+              <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
+                <PlusCircle /> Create New Notification
+              </h2>
+              <label htmlFor="title-select" className="block text-gray-300 mb-1">Select Title</label>
+              <select
+                id="title-select"
+                className="w-full mb-3 p-2 rounded bg-gray-800 text-white"
+                value={newNotification.title}
+                onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value })}
+                disabled={creating}
+              >
+                <option value="">--Select a Title--</option>
+                {defaultNotifications.map((notif, i) => (
+                  <option key={i} value={notif.title}>{notif.title}</option>
+                ))}
+              </select>
 
-        <label htmlFor="message-select" className="block text-gray-300 mb-1">Select Message</label>
-        <select
-          id="message-select"
-          className="w-full mb-3 p-2 rounded bg-gray-800 text-white"
-          value={newNotification.message}
-          onChange={(e) => setNewNotification({ ...newNotification, message: e.target.value })}
-          disabled={creating}
-        >
-          <option value="">--Select a Message--</option>
-          {defaultNotifications.map((notif, i) => (
-            <option key={i} value={notif.message}>{notif.message}</option>
-          ))}
-        </select>
+              <label htmlFor="message-select" className="block text-gray-300 mb-1">Select Message</label>
+              <select
+                id="message-select"
+                className="w-full mb-3 p-2 rounded bg-gray-800 text-white"
+                value={newNotification.message}
+                onChange={(e) => setNewNotification({ ...newNotification, message: e.target.value })}
+                disabled={creating}
+              >
+                <option value="">--Select a Message--</option>
+                {defaultNotifications.map((notif, i) => (
+                  <option key={i} value={notif.message}>{notif.message}</option>
+                ))}
+              </select>
 
-        <input
-          type="text"
-          placeholder="Category (optional)"
-          className="w-full mb-4 p-2 rounded bg-gray-800 text-white"
-          value={newNotification.category}
-          onChange={(e) => setNewNotification({ ...newNotification, category: e.target.value })}
-          disabled={creating}
-        />
-        <button
-          onClick={createStoredNotification}
-          disabled={creating}
-          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded disabled:opacity-50"
-        >
-          {creating ? "Creating..." : "Create Notification"}
-        </button>
-      </div>
+              <input
+                type="text"
+                placeholder="Category (optional)"
+                className="w-full mb-4 p-2 rounded bg-gray-800 text-white"
+                value={newNotification.category}
+                onChange={(e) => setNewNotification({ ...newNotification, category: e.target.value })}
+                disabled={creating}
+              />
+              <button
+                onClick={createStoredNotification}
+                disabled={creating}
+                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded disabled:opacity-50"
+              >
+                {creating ? "Creating..." : "Create Notification"}
+              </button>
+            </div>
 
+            {/* Stored Notifications List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {storedNotifications.length === 0 && (
                 <div className="text-center py-12 col-span-full">
@@ -384,7 +373,6 @@ const AdminNotifications = () => {
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className={`w-12 h-12 ${styles.iconBg} rounded-full flex items-center justify-center text-white text-xl`}>
-                        {/* Optionally display icon here if stored */}
                         <Bell />
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${styles.bg} ${styles.text} capitalize`}>
@@ -392,13 +380,8 @@ const AdminNotifications = () => {
                       </span>
                     </div>
 
-                    <h3 className="text-xl font-semibold text-white mb-3">
-                      {notification.title}
-                    </h3>
-
-                    <p className="text-gray-300 mb-6 leading-relaxed whitespace-pre-wrap">
-                      {notification.message}
-                    </p>
+                    <h3 className="text-xl font-semibold text-white mb-3">{notification.title}</h3>
+                    <p className="text-gray-300 mb-6 leading-relaxed whitespace-pre-wrap">{notification.message}</p>
 
                     <button
                       onClick={() => sendStoredNotification(notification._id)}
@@ -429,3 +412,4 @@ const AdminNotifications = () => {
 };
 
 export default AdminNotifications;
+
