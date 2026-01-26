@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000", {
+const socket = io("https://footyhub-backend-hrqm.onrender.com", {
   withCredentials: true,
   autoConnect: true,
   transports: ['websocket', 'polling'], // Try websocket first, fallback to polling
