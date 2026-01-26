@@ -5,7 +5,7 @@ import { useAuth } from "../Explore/AuthContext.jsx";
 import { validatePassword } from "../../utils/passwordValidator.js";
 import api from "../../utils/api.js";
 
-const API = import.meta.env.VITE_API_BASE_URL + "/api";
+const API = "https://footyhub-backend-hrqm.onrender.com/api";
 
 const Profile = () => {
   const { user, updateUser, logout } = useAuth();
@@ -30,9 +30,7 @@ const Profile = () => {
   const [passwordErrors, setPasswordErrors] = useState([]);
 
   const [avatarPreview, setAvatarPreview] = useState(
-    user?.avatar
-      ? `${import.meta.env.VITE_API_BASE_URL}${user.avatar}`
-      : "/uploads/avatars/default-avatar.png"
+    user?.avatar || "/uploads/avatars/default-avatar.png"
   );
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarChanged, setAvatarChanged] = useState(false);
@@ -40,35 +38,30 @@ const Profile = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
 
-  // Load profile from backend
+  // Load profile from backend (removed redundant call on mount)
   const fetchProfile = async () => {
     try {
-      const data = await api.get("/users/profile");
+      const data = await api.get(`${API}/users/profile`);
 
       const u = data.user || data;
 
       setName(u.name);
       setEmail(u.email);
-      setAvatarPreview(
-        u.avatar ? `${import.meta.env.VITE_API_BASE_URL}${u.avatar}` : "/uploads/avatars/default-avatar.png"
-      );
+      setAvatarPreview(u.avatar || "/uploads/avatars/default-avatar.png");
 
       updateUser(u);
     } catch (err) {
-      setMessage({
-        text: err.response?.data?.message || "Failed to refresh profile data",
-        type: "error",
-      });
+      // Don't logout on 401 to keep user data displayed
+      setMessage({ text: err.response?.data?.message || "Failed to refresh profile data", type: "error" });
     }
   };
 
+  // Update local states when user data changes
   useEffect(() => {
     if (user) {
       setName(user.name);
       setEmail(user.email);
-      setAvatarPreview(
-        user.avatar ? `${import.meta.env.VITE_API_BASE_URL}${user.avatar}` : "/uploads/avatars/default-avatar.png"
-      );
+      setAvatarPreview(user.avatar || "/uploads/avatars/default-avatar.png");
     }
   }, [user]);
 
@@ -128,28 +121,24 @@ const Profile = () => {
         fd.append("currentPassword", confirmPassword);
         fd.append("avatar", avatarFile);
 
-        data = await api.put("/users/profile", fd);
+        data = await api.put(`${API}/users/profile`, fd);
       } else {
         const body = { currentPassword: confirmPassword };
         if (stagedName) body.name = stagedName;
         if (stagedEmail) body.email = stagedEmail;
         if (removeAvatar) body.removeAvatar = true;
 
-        data = await api.put("/users/profile", body);
+        data = await api.put(`${API}/users/profile`, body);
       }
 
       const updatedUser = data.user || data;
       updateUser(updatedUser);
       setMessage({ text: "Profile updated!", type: "success" });
 
-      // Update local states immediately
+      // Update local states immediately to reflect changes
       setName(updatedUser.name);
       setEmail(updatedUser.email);
-      setAvatarPreview(
-        updatedUser.avatar
-          ? `${import.meta.env.VITE_API_BASE_URL}${updatedUser.avatar}`
-          : "/uploads/avatars/default-avatar.png"
-      );
+      setAvatarPreview(updatedUser.avatar || "/uploads/avatars/default-avatar.png");
 
       setStagedName(null);
       setStagedEmail(null);
@@ -185,7 +174,7 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      await api.put("/users/update-password", { currentPassword, newPassword });
+      await api.put(`${API}/users/update-password`, { currentPassword, newPassword });
 
       setMessage({ text: "Password updated!", type: "success" });
       setPasswordOpen(false);
@@ -381,7 +370,7 @@ const Profile = () => {
                     onChange={handleNewPasswordChange}
                     placeholder="New password"
                     className={`w-full bg-transparent border-b p-2 text-white focus:outline-none focus:border-green-400 ${
-                      passwordErrors.length > 0 ? "border-red-500" : "border-gray-700"
+                      passwordErrors.length > 0 ? 'border-red-500' : 'border-gray-700'
                     }`}
                   />
                   {passwordErrors.length > 0 && (
