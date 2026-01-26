@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "../Notifications/axiosInstance";
 import { CheckCircle, Trash2, Bell } from "lucide-react";
+import api from "../../utils/api.js"; // ✅ Use the main backend
 
 const NotificationsPage = () => {
   const [notifications, setNotifications] = useState([]);
@@ -11,7 +11,7 @@ const NotificationsPage = () => {
 
   const fetchNotifications = async () => {
     try {
-      const { data } = await axios.get("/api/notifications/my");
+      const { data } = await api.get("/notifications/my");
       setNotifications(data);
     } catch (error) {
       console.log(error);
@@ -20,7 +20,7 @@ const NotificationsPage = () => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.put("/api/notifications/read/" + id);
+      await api.put("/notifications/read/" + id);
       fetchNotifications();
     } catch (err) {
       console.log(err);
@@ -29,7 +29,7 @@ const NotificationsPage = () => {
 
   const markAllAsRead = async () => {
     try {
-      await axios.put("/api/notifications/read-all");
+      await api.put("/notifications/read-all");
       fetchNotifications();
     } catch (err) {
       console.log(err);
@@ -38,7 +38,7 @@ const NotificationsPage = () => {
 
   const clearAllNotifications = async () => {
     try {
-      await axios.delete("/api/notifications/delete-all");
+      await api.delete("/notifications/delete-all");
       setNotifications([]);
     } catch (err) {
       console.log(err);
@@ -47,7 +47,7 @@ const NotificationsPage = () => {
 
   const deleteNotification = async (id) => {
     try {
-      await axios.delete("/api/notifications/delete/" + id);
+      await api.delete("/notifications/delete/" + id);
       setNotifications((prev) => prev.filter((n) => n._id !== id));
     } catch (err) {
       console.log(err);
@@ -95,49 +95,18 @@ const NotificationsPage = () => {
                 </div>
               ) : (
                 notifications.map((noti) => {
-                  // Define category-based styles
                   const getCategoryStyles = (category) => {
                     switch (category) {
                       case 'product':
-                        return {
-                          border: 'border-green-500/50',
-                          bg: 'bg-gradient-to-r from-green-900/20 to-emerald-900/20',
-                          hoverBg: 'hover:from-green-900/30 hover:to-emerald-900/30',
-                          shadow: 'shadow-green-500/10',
-                          iconBg: 'bg-gradient-to-br from-green-600 to-emerald-600'
-                        };
+                        return { border: 'border-green-500/50', bg: 'bg-gradient-to-r from-green-900/20 to-emerald-900/20', hoverBg: 'hover:from-green-900/30 hover:to-emerald-900/30', shadow: 'shadow-green-500/10', iconBg: 'bg-gradient-to-br from-green-600 to-emerald-600' };
                       case 'order':
-                        return {
-                          border: 'border-blue-500/50',
-                          bg: 'bg-gradient-to-r from-blue-900/20 to-cyan-900/20',
-                          hoverBg: 'hover:from-blue-900/30 hover:to-cyan-900/30',
-                          shadow: 'shadow-blue-500/10',
-                          iconBg: 'bg-gradient-to-br from-blue-600 to-cyan-600'
-                        };
+                        return { border: 'border-blue-500/50', bg: 'bg-gradient-to-r from-blue-900/20 to-cyan-900/20', hoverBg: 'hover:from-blue-900/30 hover:to-cyan-900/30', shadow: 'shadow-blue-500/10', iconBg: 'bg-gradient-to-br from-blue-600 to-cyan-600' };
                       case 'news':
-                        return {
-                          border: 'border-purple-500/50',
-                          bg: 'bg-gradient-to-r from-purple-900/20 to-violet-900/20',
-                          hoverBg: 'hover:from-purple-900/30 hover:to-violet-900/30',
-                          shadow: 'shadow-purple-500/10',
-                          iconBg: 'bg-gradient-to-br from-purple-600 to-violet-600'
-                        };
+                        return { border: 'border-purple-500/50', bg: 'bg-gradient-to-r from-purple-900/20 to-violet-900/20', hoverBg: 'hover:from-purple-900/30 hover:to-violet-900/30', shadow: 'shadow-purple-500/10', iconBg: 'bg-gradient-to-br from-purple-600 to-violet-600' };
                       case 'fixture':
-                        return {
-                          border: 'border-orange-500/50',
-                          bg: 'bg-gradient-to-r from-orange-900/20 to-red-900/20',
-                          hoverBg: 'hover:from-orange-900/30 hover:to-red-900/30',
-                          shadow: 'shadow-orange-500/10',
-                          iconBg: 'bg-gradient-to-br from-orange-600 to-red-600'
-                        };
+                        return { border: 'border-orange-500/50', bg: 'bg-gradient-to-r from-orange-900/20 to-red-900/20', hoverBg: 'hover:from-orange-900/30 hover:to-red-900/30', shadow: 'shadow-orange-500/10', iconBg: 'bg-gradient-to-br from-orange-600 to-red-600' };
                       default:
-                        return {
-                          border: 'border-gray-500/50',
-                          bg: 'bg-gradient-to-r from-gray-900/20 to-slate-900/20',
-                          hoverBg: 'hover:from-gray-900/30 hover:to-slate-900/30',
-                          shadow: 'shadow-gray-500/10',
-                          iconBg: 'bg-gradient-to-br from-gray-600 to-slate-600'
-                        };
+                        return { border: 'border-gray-500/50', bg: 'bg-gradient-to-r from-gray-900/20 to-slate-900/20', hoverBg: 'hover:from-gray-900/30 hover:to-slate-900/30', shadow: 'shadow-gray-500/10', iconBg: 'bg-gradient-to-br from-gray-600 to-slate-600' };
                     }
                   };
 
@@ -160,47 +129,43 @@ const NotificationsPage = () => {
                           </div>
                         </div>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className={`text-base md:text-lg font-semibold mb-1 ${
-                              noti.read ? "text-gray-300" : "text-white"
-                            }`}>
-                              {noti.title}
-                            </h3>
-                            <p className={`text-sm md:text-base leading-relaxed ${
-                              noti.read ? "text-gray-400" : "text-gray-200"
-                            }`}>
-                              {noti.message}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-2">
-                              {new Date(noti.createdAt).toLocaleString()}
-                            </p>
-                          </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <h3 className={`text-base md:text-lg font-semibold mb-1 ${noti.read ? "text-gray-300" : "text-white"}`}>
+                                {noti.title}
+                              </h3>
+                              <p className={`text-sm md:text-base leading-relaxed ${noti.read ? "text-gray-400" : "text-gray-200"}`}>
+                                {noti.message}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-2">
+                                {new Date(noti.createdAt).toLocaleString()}
+                              </p>
+                            </div>
 
-                          <div className="flex items-center gap-2 ml-4">
-                            {!noti.read && (
-                              <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                            )}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteNotification(noti._id);
-                              }}
-                              className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-400 transition-all duration-200 transform hover:scale-110"
-                            >
-                              <Trash2 size={16} />
-                            </button>
+                            <div className="flex items-center gap-2 ml-4">
+                              {!noti.read && (
+                                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                              )}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteNotification(noti._id);
+                                }}
+                                className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-400 transition-all duration-200 transform hover:scale-110"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {!noti.read && (
-                      <div className={`absolute inset-0 border-2 ${styles.border.replace('/50', '/30')} rounded-xl pointer-events-none`}></div>
-                    )}
-                  </div>
-                );
+                      {!noti.read && (
+                        <div className={`absolute inset-0 border-2 ${styles.border.replace('/50', '/30')} rounded-xl pointer-events-none`}></div>
+                      )}
+                    </div>
+                  );
                 })
               )}
             </div>
